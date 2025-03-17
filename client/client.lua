@@ -47,10 +47,16 @@ end
 
 RegisterCommand("testmenu", function()
     local menu = KUI.CreateMenu("KUI Menu", "Mon sous-titre")
-    KUI.AddOption(menu, "Option ✅1", function() print("Option 1 sélectionnée") end)
+    KUI.AddOption(menu, "Option 1", function() print("Option 1 sélectionnée") end)
     KUI.AddOption(menu, "Option 2", function() print("Option 2 sélectionnée") end)
     KUI.AddOption(menu, "Option 3", function() print("Option 3 sélectionnée") end)
     KUI.AddOption(menu, "Option 4", function() print("Option 4 sélectionnée") end)
+    KUI.AddOption(menu, "Option 5", function() print("Option 5 sélectionnée") end)
+    KUI.AddOption(menu, "Option 6", function() print("Option 6 sélectionnée") end)
+    KUI.AddOption(menu, "Option 7", function() print("Option 7 sélectionnée") end)
+    KUI.AddOption(menu, "Option 8", function() print("Option 8 sélectionnée") end)
+    KUI.AddOption(menu, "Option 9", function() print("Option 9 sélectionnée") end)
+    KUI.AddOption(menu, "Option 0", function() print("Option 0   sélectionnée") end)
     KUI.Visible(menu, not menu.visible)
 end, false)
 
