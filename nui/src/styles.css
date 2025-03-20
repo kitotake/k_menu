@@ -1,42 +1,83 @@
-.menu-container {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-.menu-container.active {
-  visibility: visible;
-  opacity: 1;
-}
-
-.menu-title {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.menu-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  background-color: #ff6600;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 5px;
-}
-
-.menu-button:hover {
-  background-color: #ff4500;
-}
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .menu-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .menu-header {
+    padding: 15px;
+    background-color: rgba(52, 152, 219, 0.9);
+    color: white;
+    text-align: center;
+  }
+  
+  .menu-title {
+    font-size: 22px;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .menu-subtitle {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+  
+  .menu-options {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .menu-option {
+    padding: 15px;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .menu-option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .menu-option.selected {
+    background-color: rgba(52, 152, 219, 0.5);
+    font-weight: 500;
+  }
+  
+  /* Scrollbar styling */
+  .menu-options::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  .menu-options::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  .menu-options::-webkit-scrollbar-thumb {
+    background: rgba(52, 152, 219, 0.7);
+    border-radius: 5px;
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .menu-container {
+    animation: fadeIn 0.2s ease-out;
+  }

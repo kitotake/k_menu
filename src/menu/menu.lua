@@ -1,6 +1,5 @@
--- client.lua - Main client entry point for k_lib
-local KMenu = {}
-local Utils = {}
+
+
 
 -- Exported functions to make them accessible to other resources
 function CreateMenu(id, title, subtitle)
@@ -17,6 +16,7 @@ end
 
 -- Main menu creation function
 function createMainMenu()
+    Utils.log("Creating main menu", "green")
     
     local menu = KMenu.createMenu("main", "Menu Principal", "Choisissez une option")
     

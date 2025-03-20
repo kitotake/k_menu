@@ -1,0 +1,10 @@
+{
+    "Lua.diagnostics.disable": [
+        "missing-parameter"
+    ],
+    "Lua.diagnostics.globals": [
+        "createSubMenu",
+        "createMainMenu",
+        "Utils"
+    ]
+}
