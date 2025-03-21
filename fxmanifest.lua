@@ -15,6 +15,7 @@ files {
 
 -- ✅ Ordre de chargement des scripts
 client_scripts {
+    'src/load.lua',
     'src/components/utils.lua',     -- Charger Utils en premier
     'src/components/button.lua',         -- Charger tous les composants
     'src/components/input.lua',         

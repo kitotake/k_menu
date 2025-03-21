@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useEffect } from 'react';
-import './styles.css';
+import './components/styles.css';
 var Menu = function () {
     var _a = useState(null), menuData = _a[0], setMenuData = _a[1];
     var _b = useState(0), selectedIndex = _b[0], setSelectedIndex = _b[1];

@@ -1,31 +1,55 @@
-import React from "react";  
-import "./styles.css";  
+import React, { useEffect, useState } from "react";
+import "./styles.css";
+import "../script.js"
 
-// Définition des types des props
-interface MenuProps {
-  options: string[];
-  onSelect: (option: string) => void;
+interface MenuOption {
+    label: string;
+    value: string;
 }
 
-const Menu: React.FC<MenuProps> = ({ options, onSelect }) => {
-  return (
-    <div className="menu-container">
-      <div className="menu-header">
-        <h2 className="menu-title">Menu</h2>
-      </div>
-      <div className="menu-options">
-        {options.map((option, index) => (
-          <div
-            key={index}
-            className="menu-option"
-            onClick={() => onSelect(option)}
-          >
-            {option}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+interface MenuData {
+    title: string;
+    subtitle: string;
+    options: MenuOption[];
+}
+
+const Menu: React.FC = () => {
+    const [menuData, setMenuData] = useState<MenuData | null>(null);
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data.action === "openTestMenu") {
+                setMenuData(event.data.menuData);
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
+    }, []);
+
+    const handleOptionClick = (option: MenuOption) => {
+        fetch(`https://${GetParentResourceName()}/menuOptionSelected`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ value: option.value })
+        });
+    };
+
+    if (!menuData) return null;
+
+    return (
+        <div className="menu-container">
+            <h1>{menuData.title}</h1>
+            <p>{menuData.subtitle}</p>
+            <div className="menu-options">
+                {menuData.options.map((option, index) => (
+                    <button key={index} onClick={() => handleOptionClick(option)}>
+                        {option.label}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
 };
 
 export default Menu;
