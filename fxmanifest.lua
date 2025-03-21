@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Kitotake'
 description 'Librairie de menu pour FiveM'
-version '1.0.0'
+version '1.1.0'
 
 -- Charger les fichiers NUI (React + TypeScript)
 ui_page 'nui/dist/index.html'
@@ -13,20 +13,34 @@ files {
     'nui/dist/assets/**/*'
 }
 
--- ✅ Charger le code client et serveur
+-- ✅ Ordre de chargement des scripts
 client_scripts {
-    'client/client.lua',      -- Gère les commandes et la logique client
-    'src/components/*.lua', -- Charge les composants réutilisables
-    'src/menu/*.lua'      -- Charge les fichiers du module menus
+    'src/components/utils.lua',     -- Charger Utils en premier
+    'src/components/button.lua',         -- Charger tous les composants
+    'src/components/input.lua',         
+    'src/components/title.lua',         
+    'src/menu/manager.lua',         -- Charger le gestionnaire de menu
+    'src/menu/init.lua',              
+           
+    'src/menu/menu.lua',              
+    'src/menu/submenu.lua',              
+    'src/nui/nui_bridge.lua',               -- Charger les fichiers nui_bridge
+    'client/client.lua'             -- Charger le point d'entrée principal en dernier
 }
 
 server_scripts {
-    'server/server.lua'  -- Ajoute un fichier serveur pour gérer les événements réseau
+    'server/server.lua'             -- Ajoute un fichier serveur pour gérer les événements réseau
 }
 
--- ✅ Exporte les fonctions du menu pour qu'elles soient accessibles aux autres scripts
+-- ✅ Exporte les fonctions pour qu'elles soient accessibles aux autres scripts
 exports {
     'CreateMenu',
     'AddOption',
-    'SetMenuVisible'
+    'SetMenuVisible',
+    'AddSeparator',
+    'CreateSubMenu',
+    'CloseAllMenus',
+    'CreateQuickMenu',
+    'GetModule',
+    'Notify'
 }

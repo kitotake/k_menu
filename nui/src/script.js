@@ -23,3 +23,5 @@ document.addEventListener("keydown", (event: KeyboardEvent) => {
         fetch(`https://${GetParentResourceName()}/closeMenu`, { method: "POST" });
     }
 });
+
+import Menu from "./Menu.js"; // ✅ Pour du JavaScript
