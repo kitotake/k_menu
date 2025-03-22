@@ -1,26 +1,24 @@
-// ✅ Suppression de `declare`, inutile en JS
+// Gestionnaire d'événements pour les messages NUI
 window.addEventListener("message", (event) => {
     const data = event.data;
-    const menuContainer = document.querySelector(".menu-container");
 
-    if (!menuContainer) {
-        console.error("⚠️ L'élément .menu-container est introuvable !");
-        return;
-    }
-
-    if (data.action === "toggleMenu") {
-        menuContainer.style.visibility = data.visible ? "visible" : "hidden";
-        menuContainer.style.opacity = data.visible ? "1" : "0";
+    if (data.action === "openTestMenu") {
+        // Le menu sera affiché par React
+        console.log("Menu ouvert avec données:", data.menuData);
+    } else if (data.action === "closeUI") {
+        // Le menu sera fermé par React
+        console.log("Fermeture du menu demandée");
     }
 });
 
-// ✅ Fermeture avec Escape
+// Gestion de la touche Escape
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-        event.preventDefault(); // ✅ Empêche d'autres actions liées à Escape
-        fetch(`https://${GetParentResourceName()}/closeMenu`, { method: "POST" });
+        event.preventDefault();
+        fetch(`https://${GetParentResourceName()}/closeMenu`, { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({})
+        });
     }
 });
-
-// ✅ Vérification de l'import pour JS
-import Menu from "./Menu.js"; // ⚠️ Assure-toi que `Menu.js` existe bien
