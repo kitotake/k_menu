@@ -1,0 +1,102 @@
+@use '../../../styles/variables' as *;
+
+// ── Base ──────────────────────────────────────────────────────────────────────
+.k-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: $item-radius;
+  font-family: $font-ui;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    border-color     $transition-fast,
+    box-shadow       $transition-fast,
+    opacity          $transition-fast;
+  white-space: nowrap;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // Sizes
+  &--sm  { font-size: 11px; padding: 4px 10px;  height: 28px; }
+  &--md  { font-size: 13px; padding: 6px 16px;  height: 36px; }
+  &--lg  { font-size: 14px; padding: 8px 22px;  height: 44px; }
+
+  &--full-width { width: 100%; }
+
+  // ── Variants ────────────────────────────────────────────────────────────────
+  &--primary {
+    background: $accent;
+    border-color: $accent;
+    color: #fff;
+    &:hover  { background: $accent-light; border-color: $accent-light; box-shadow: 0 0 14px $accent-glow; }
+    &:active { background: darken($accent, 8%); }
+  }
+
+  &--secondary {
+    background: rgba($accent, 0.1);
+    border-color: rgba($accent, 0.3);
+    color: $accent-light;
+    &:hover  { background: rgba($accent, 0.18); border-color: $border-accent; }
+    &:active { background: rgba($accent, 0.25); }
+  }
+
+  &--ghost {
+    background: transparent;
+    border-color: $border-color;
+    color: $text-secondary;
+    &:hover  { background: $bg-item-hover; color: $text-primary; border-color: rgba(255,255,255,0.12); }
+    &:active { background: $bg-item-active; }
+  }
+
+  &--danger {
+    background: rgba($danger, 0.12);
+    border-color: rgba($danger, 0.4);
+    color: $danger;
+    &:hover  { background: rgba($danger, 0.2); box-shadow: 0 0 12px $danger-glow; }
+    &:active { background: rgba($danger, 0.28); }
+  }
+
+  &--success {
+    background: rgba($success, 0.12);
+    border-color: rgba($success, 0.4);
+    color: $success;
+    &:hover  { background: rgba($success, 0.2); box-shadow: 0 0 12px $success-glow; }
+    &:active { background: rgba($success, 0.28); }
+  }
+
+  // ── Loading ─────────────────────────────────────────────────────────────────
+  &--loading { pointer-events: none; }
+
+  &__spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  &__icon { display: inline-flex; align-items: center; font-size: 1.1em; }
+  &__label { line-height: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,39 @@
+@use '../styles/variables' as *;
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px 16px;
+  border-top: 1px solid $border-color;
+  background: $bg-header;
+  flex-shrink: 0;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: $text-muted;
+  letter-spacing: 0.03em;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid $border-color;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: $font-mono;
+  font-size: 9px;
+  color: $text-secondary;
+  white-space: nowrap;
+  min-width: 18px;
+  text-align: center;
+  font-style: normal;
+}

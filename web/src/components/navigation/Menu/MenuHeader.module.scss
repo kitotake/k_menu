@@ -1,0 +1,108 @@
+@use '../styles/variables' as *;
+
+.header {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid $border-color;
+  flex-shrink: 0;
+}
+
+.banner {
+  position: relative;
+  height: 80px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba($bg-header, 0.2) 0%,
+    rgba($bg-header, 0.9) 100%
+  );
+}
+
+.content {
+  padding: 14px 16px 0;
+  background: $bg-header;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+.titleGroup {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $text-primary;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: $text-secondary;
+  letter-spacing: 0.03em;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.counter {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: $font-mono;
+  flex-shrink: 0;
+}
+
+.counterCurrent {
+  font-size: 16px;
+  font-weight: 500;
+  color: $accent-light;
+}
+
+.counterSep {
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.counterTotal {
+  font-size: 12px;
+  color: $text-secondary;
+}
+
+.accentLine {
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    $accent 0%,
+    rgba($accent, 0.4) 60%,
+    transparent 100%
+  );
+  margin: 0 -16px;
+  border-radius: 1px;
+}

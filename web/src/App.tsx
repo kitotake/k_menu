@@ -1,122 +1,111 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useCallback } from 'react'
+import type { MenuData, Notification, NUIMessage } from './types'
+import { useNUIMessage } from './hooks/useNUIMessage'
+import { Menu } from './components/Menu'
+import { Notifications } from './components/Notifications'
+import styles from './App.module.scss'
 
-function App() {
-  const [count, setCount] = useState(0)
+let notifCounter = 0
+
+export default function App() {
+  const [menus, setMenus] = useState<MenuData[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
+
+  const handleMessage = useCallback((msg: NUIMessage) => {
+    switch (msg.action) {
+
+      case 'openMenu': {
+        const newMenu: MenuData = {
+          id:       msg.menuId  ?? 'menu_' + Date.now(),
+          title:    msg.title   ?? 'Menu',
+          subtitle: msg.subtitle,
+          banner:   msg.banner,
+          items:    msg.items   ?? [],
+        }
+        setMenus(prev => {
+          // Replace if same id, otherwise stack (submenu)
+          const exists = prev.findIndex(m => m.id === newMenu.id)
+          if (exists !== -1) {
+            const updated = [...prev]
+            updated[exists] = newMenu
+            return updated
+          }
+          return [...prev, newMenu]
+        })
+        break
+      }
+
+      case 'setItems': {
+        setMenus(prev =>
+          prev.map(m =>
+            m.id === msg.menuId
+              ? { ...m, items: msg.items ?? m.items }
+              : m
+          )
+        )
+        break
+      }
+
+      case 'closeMenu': {
+        if (msg.menuId) {
+          setMenus(prev => prev.filter(m => m.id !== msg.menuId))
+        } else {
+          setMenus([])
+        }
+        break
+      }
+
+      case 'notify': {
+        const notif: Notification = {
+          id:       `notif_${++notifCounter}`,
+          type:     msg.type      ?? 'info',
+          message:  msg.message   ?? '',
+          duration: msg.duration  ?? 4000,
+        }
+        setNotifications(prev => [...prev, notif])
+        break
+      }
+
+      default:
+        break
+    }
+  }, [])
+
+  useNUIMessage(handleMessage)
+
+  const handleClose = useCallback((menuId: string) => {
+    setMenus(prev => {
+      const idx = prev.findIndex(m => m.id === menuId)
+      if (idx === -1) return prev
+      // Close this menu and all on top of it (submenu stack)
+      return prev.slice(0, idx)
+    })
+  }, [])
+
+  const removeNotif = useCallback((id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id))
+  }, [])
+
+  // Top menu in the stack
+  const activeMenu = menus[menus.length - 1] ?? null
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className={styles.root}>
+      {activeMenu && (
+        <div className={styles.overlay}>
+          <div className={styles.menuWrapper}>
+            <Menu
+              key={activeMenu.id}
+              menu={activeMenu}
+              onClose={() => handleClose(activeMenu.id)}
+            />
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      )}
+      <Notifications
+        notifications={notifications}
+        onRemove={removeNotif}
+      />
+    </div>
   )
 }
-
-export default App

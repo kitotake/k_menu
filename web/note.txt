@@ -1,8 +1,10 @@
 Structure du dossier pour le volume New Volume
-Le numï¿½ro de sï¿½rie du volume est A0EE-043F
+Le numéro de série du volume est A0EE-043F
 D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
 |   App.css
+|   App.module.scss
 |   App.tsx
+|   dev-mock.ts
 |   index.css
 |   main.tsx
 |   
@@ -11,44 +13,110 @@ D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
 |       react.svg
 |       vite.svg
 |       
-\---components
-    |   index.ts
-    |   
-    +---animations
-    +---common
-    |   +---Button
-    |   |       Button.scss
-    |   |       Button.tsx
-    |   |       index.ts
-    |   |       
-    |   +---Card
-    |   +---Input
-    |   +---Loader
-    |   \---Modal
-    +---features
-    |   +---Auth
-    |   |   +---LoginForm
-    |   |   \---RegisterForm
-    |   +---Inventory
-    |   |   +---DragDrop
-    |   |   +---InventoryGrid
-    |   |   \---InventoryItem
-    |   \---User
-    |       +---UserCard
-    |       \---UserProfile
-    +---hooks
-    +---layout
-    |   +---Footer
-    |   +---Header
-    |   +---Navbar
-    |   \---Sidebar
-    +---navigation
-    |   +---Breadcrumb
-    |   +---Menu
-    |   \---Tabs
-    \---ui
-        +---Avatar
-        +---Badge
-        +---Icon
-        +---Tooltip
-        \---Typography
++---components
+|   |   index.ts
+|   |   Notifications.module.scss
+|   |   Notifications.tsx
+|   |   
+|   +---animations
+|   +---common
+|   |   +---Button
+|   |   |       Button.scss
+|   |   |       Button.tsx
+|   |   |       index.ts
+|   |   |       
+|   |   +---Card
+|   |   |       Card.scss
+|   |   |       Card.tsx
+|   |   |       index.ts
+|   |   |       
+|   |   +---Input
+|   |   |       index.ts
+|   |   |       Input.scss
+|   |   |       Input.tsx
+|   |   |       
+|   |   +---Loader
+|   |   |       index.ts
+|   |   |       Loader.scss
+|   |   |       Loader.tsx
+|   |   |       
+|   |   \---Modal
+|   |           index.ts
+|   |           Modal.tsx
+|   |           
+|   +---features
+|   |   \---User
+|   |       \---UserCard
+|   |               UserCard.tsx
+|   |               
+|   +---hooks
+|   +---layout
+|   |   +---Footer
+|   |   |       Footer.tsx
+|   |   |       
+|   |   +---Header
+|   |   |       Header.tsx
+|   |   |       
+|   |   +---Navbar
+|   |   |       Navbar.tsx
+|   |   |       
+|   |   \---Sidebar
+|   |           Sidebar.tsx
+|   |           
+|   +---navigation
+|   |   +---Breadcrumb
+|   |   +---Menu
+|   |   |       Menu.module.scss
+|   |   |       Menu.tsx
+|   |   |       MenuFooter.module.scss
+|   |   |       MenuFooter.tsx
+|   |   |       MenuHeader.module.scss
+|   |   |       MenuHeader.tsx
+|   |   |       MenuItem.module.scss
+|   |   |       MenuItem.tsx
+|   |   |       
+|   |   \---Tabs
+|   \---ui
+|       +---Avatar
+|       |       Avatar.tsx
+|       |       Index.ts
+|       |       
+|       +---Badge
+|       |       badge.tsx
+|       |       index.ts
+|       |       
+|       +---Icon
+|       |       icon.tsx
+|       |       index.ts
+|       |       
+|       +---Tooltip
+|       |       Index.ts
+|       |       Tooltip.tsx
+|       |       
+|       \---Typography
+|               Index.ts
+|               Typography.tsx
+|               
++---core
+|   +---bridge
+|   +---devtools
+|   +---events
+|   \---nui
+|           nui.ts
+|           
++---hooks
+|       useKeyPress.ts
+|       useNUIMessage.ts
+|       
++---providers
++---styles
+|       global.scss
+|       _variables.scss
+|       
++---theme
++---types
+|       index.ts
+|       
+\---utils
+        nui.ts
+        

@@ -1,0 +1,51 @@
+@use '../styles/variables' as *;
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  width: $menu-width;
+  max-height: $menu-max-height;
+  background: $bg-menu;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  overflow: hidden;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 60px rgba(0, 0, 0, 0.4);
+  animation: slideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  // Subtle scanline texture
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.008) 2px,
+      rgba(255, 255, 255, 0.008) 4px
+    );
+    pointer-events: none;
+    border-radius: $border-radius;
+    z-index: 10;
+  }
+}
+
+.itemList {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px 0;
+  scroll-behavior: smooth;
+
+  // Fade at top/bottom
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 8px,
+    black calc(100% - 8px),
+    transparent 100%
+  );
+}

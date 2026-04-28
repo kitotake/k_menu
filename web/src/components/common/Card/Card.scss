@@ -1,0 +1,18 @@
+@use '../../../styles/variables' as *;
+
+.k-card {
+  border-radius: $border-radius;
+  background: $bg-menu;
+  border: 1px solid $border-color;
+  transition: box-shadow $transition-normal;
+
+  &--elevated { box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  &--outlined { background: transparent; }
+  &--ghost    { background: transparent; border-color: transparent; }
+  &--glow     { box-shadow: 0 0 24px $accent-glow; border-color: rgba($accent, 0.2); }
+
+  &--pad-none { padding: 0; }
+  &--pad-sm   { padding: 8px 12px; }
+  &--pad-md   { padding: 14px 16px; }
+  &--pad-lg   { padding: 24px; }
+}

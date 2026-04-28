@@ -1,0 +1,267 @@
+@use '../styles/variables' as *;
+
+// ── Separator ─────────────────────────────────────────────────────────────────
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  pointer-events: none;
+}
+
+.separatorLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $text-muted;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.separatorLine {
+  flex: 1;
+  height: 1px;
+  background: $border-color;
+}
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  pointer-events: none;
+}
+
+.titleDot {
+  width: 14px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, $accent);
+
+  &:last-child {
+    background: linear-gradient(to left, transparent, $accent);
+  }
+}
+
+.titleText {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: $accent-light;
+}
+
+// ── Item base ─────────────────────────────────────────────────────────────────
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: $item-height;
+  cursor: pointer;
+  transition:
+    background-color $transition-fast,
+    opacity $transition-fast;
+  border-radius: $item-radius;
+  margin: 1px 6px;
+
+  &:hover:not(.disabled) {
+    background: $bg-item-hover;
+  }
+
+  &:active:not(.disabled) {
+    background: $bg-item-active;
+  }
+}
+
+// ── Selected state ────────────────────────────────────────────────────────────
+.selected {
+  background: $bg-item-hover !important;
+
+  .label {
+    color: $text-primary;
+  }
+}
+
+.selectedBar {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 60%;
+  background: $accent;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px $accent-glow;
+}
+
+// ── Disabled state ────────────────────────────────────────────────────────────
+.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+// ── Icon ─────────────────────────────────────────────────────────────────────
+.icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  color: $text-secondary;
+  line-height: 1;
+}
+
+// ── Content ───────────────────────────────────────────────────────────────────
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-secondary;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color $transition-fast;
+  letter-spacing: 0.02em;
+
+  .selected & {
+    color: $text-primary;
+  }
+}
+
+.description {
+  font-size: 10px;
+  color: $text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+}
+
+// ── Right side ────────────────────────────────────────────────────────────────
+.right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.rightLabel {
+  font-family: $font-mono;
+  font-size: 12px;
+  color: $text-secondary;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+
+  .selected & {
+    border-color: rgba($accent, 0.3);
+    color: $accent-light;
+  }
+}
+
+.arrow {
+  font-size: 18px;
+  color: $text-muted;
+  transition: color $transition-fast, transform $transition-fast;
+  line-height: 1;
+
+  .selected & {
+    color: $accent;
+    transform: translateX(2px);
+  }
+}
+
+// ── Input ─────────────────────────────────────────────────────────────────────
+.input {
+  font-family: $font-mono;
+  font-size: 12px;
+  background: $bg-input;
+  border: 1px solid $border-accent;
+  border-radius: 4px;
+  color: $text-primary;
+  padding: 4px 8px;
+  width: 130px;
+  outline: none;
+  box-shadow: 0 0 10px rgba($accent, 0.15);
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:focus {
+    border-color: $accent;
+    box-shadow: 0 0 16px rgba($accent, 0.25);
+  }
+
+  &::placeholder {
+    color: $text-muted;
+  }
+
+  /* Remove number arrows */
+  &[type='number'] {
+    appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { display: none; }
+  }
+}
+
+.inputPreview {
+  font-family: $font-mono;
+  font-size: 12px;
+  color: $text-secondary;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inputPlaceholder {
+  color: $text-muted;
+  font-style: italic;
+}
+
+// ── Color variants ────────────────────────────────────────────────────────────
+.color_danger {
+  .label { color: $danger; }
+  &.selected {
+    background: rgba($danger, 0.08) !important;
+    .label { color: $danger; }
+    .selectedBar {
+      background: $danger;
+      box-shadow: 0 0 8px $danger-glow;
+    }
+  }
+}
+
+.color_success {
+  .label { color: $success; }
+  &.selected {
+    background: rgba($success, 0.08) !important;
+    .label { color: $success; }
+    .selectedBar {
+      background: $success;
+      box-shadow: 0 0 8px $success-glow;
+    }
+  }
+}
+
+.color_warning {
+  .label { color: $warning; }
+  &.selected {
+    background: rgba($warning, 0.06) !important;
+    .label { color: $warning; }
+    .selectedBar {
+      background: $warning;
+      box-shadow: 0 0 8px $warning-glow;
+    }
+  }
+}
