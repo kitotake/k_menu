@@ -1,15 +1,11 @@
 import { useState, useCallback } from 'react'
-import type { MenuData, Notification, NUIMessage } from './types'
+import type { MenuData, NUIMessage } from './types'
 import { useNUIMessage } from './hooks/useNUIMessage'
 import { Menu } from './components/Menu'
-import { Notifications } from './components/Notifications'
 import styles from './App.module.scss'
-
-let notifCounter = 0
 
 export default function App() {
   const [menus, setMenus] = useState<MenuData[]>([])
-  const [notifications, setNotifications] = useState<Notification[]>([])
 
   const handleMessage = useCallback((msg: NUIMessage) => {
     switch (msg.action) {
@@ -23,7 +19,6 @@ export default function App() {
           items:    msg.items   ?? [],
         }
         setMenus(prev => {
-          // Replace if same id, otherwise stack (submenu)
           const exists = prev.findIndex(m => m.id === newMenu.id)
           if (exists !== -1) {
             const updated = [...prev]
@@ -55,17 +50,6 @@ export default function App() {
         break
       }
 
-      case 'notify': {
-        const notif: Notification = {
-          id:       `notif_${++notifCounter}`,
-          type:     msg.type      ?? 'info',
-          message:  msg.message   ?? '',
-          duration: msg.duration  ?? 4000,
-        }
-        setNotifications(prev => [...prev, notif])
-        break
-      }
-
       default:
         break
     }
@@ -77,16 +61,10 @@ export default function App() {
     setMenus(prev => {
       const idx = prev.findIndex(m => m.id === menuId)
       if (idx === -1) return prev
-      // Close this menu and all on top of it (submenu stack)
       return prev.slice(0, idx)
     })
   }, [])
 
-  const removeNotif = useCallback((id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id))
-  }, [])
-
-  // Top menu in the stack
   const activeMenu = menus[menus.length - 1] ?? null
 
   return (
@@ -102,10 +80,6 @@ export default function App() {
           </div>
         </div>
       )}
-      <Notifications
-        notifications={notifications}
-        onRemove={removeNotif}
-      />
     </div>
   )
 }

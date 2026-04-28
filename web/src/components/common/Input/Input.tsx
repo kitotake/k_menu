@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes, ReactNode } from 'react'
+import './Input.scss'
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?:     string

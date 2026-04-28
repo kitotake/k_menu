@@ -49,7 +49,7 @@ export interface MenuData {
 }
 
 export interface NUIMessage {
-  action: 'openMenu' | 'closeMenu' | 'setItems' | 'notify' | 'updateItem'
+  action: 'openMenu' | 'closeMenu' | 'setItems' | 'updateItem'
   menuId?: string
   title?: string
   subtitle?: string
@@ -57,15 +57,4 @@ export interface NUIMessage {
   items?: MenuItem[]
   item?: MenuItem
   visible?: boolean
-  // Notify
-  type?: 'success' | 'error' | 'info' | 'warning'
-  message?: string
-  duration?: number
-}
-
-export interface Notification {
-  id: string
-  type: 'success' | 'error' | 'info' | 'warning'
-  message: string
-  duration: number
 }

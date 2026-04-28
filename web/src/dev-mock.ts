@@ -52,10 +52,6 @@ w.__kMenu = {
   close() {
     dispatch({ action: 'closeMenu' })
   },
-
-  notify(type: 'success'|'error'|'info'|'warning' = 'success', msg = 'Notification test') {
-    dispatch({ action: 'notify', type, message: msg, duration: 4000 })
-  },
 }
 
 console.info('[k_Menu dev] Appelle window.__kMenu.openDemo() pour tester le menu.')

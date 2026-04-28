@@ -1,4 +1,5 @@
 import type { ReactNode, HTMLAttributes } from 'react'
+import './Card.scss'
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children:  ReactNode

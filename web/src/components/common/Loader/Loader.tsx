@@ -1,46 +1,50 @@
-export type LoaderSize = 'xs' | 'sm' | 'md' | 'lg'
+import type { InputHTMLAttributes, ReactNode } from 'react'
+import './Input.scss'
 
-export interface LoaderProps {
-  size?:  LoaderSize
-  label?: string
-  color?: string
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?:     string
+  hint?:      string
+  error?:     string
+  leftIcon?:  ReactNode
+  rightIcon?: ReactNode
+  fullWidth?: boolean
 }
 
-const sizes: Record<LoaderSize, number> = { xs: 14, sm: 20, md: 32, lg: 48 }
+export function Input({
+  label,
+  hint,
+  error,
+  leftIcon,
+  rightIcon,
+  fullWidth = false,
+  className = '',
+  id,
+  ...rest
+}: InputProps) {
+  const inputId = id ?? `k-input-${Math.random().toString(36).slice(2, 7)}`
+  const fieldCls = [
+    'k-input__field',
+    leftIcon  ? 'k-input__field--left-icon'  : '',
+    rightIcon ? 'k-input__field--right-icon' : '',
+    error     ? 'k-input__field--error'      : '',
+  ].filter(Boolean).join(' ')
 
-export function Loader({ size = 'md', label, color = 'var(--k-accent, #8264ff)' }: LoaderProps) {
-  const px = sizes[size]
   return (
-    <div
-      role="status"
-      aria-label={label ?? 'Chargement…'}
-      style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
-    >
-      <svg
-        width={px} height={px}
-        viewBox="0 0 24 24"
-        fill="none"
-        style={{ animation: 'k-spin 0.8s linear infinite' }}
-      >
-        <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.1)" strokeWidth="2.5" />
-        <path
-          d="M12 2 a10 10 0 0 1 10 10"
-          stroke={color}
-          strokeWidth="2.5"
-          strokeLinecap="round"
+    <div className={['k-input', fullWidth ? 'k-input--full' : '', className].filter(Boolean).join(' ')}>
+      {label && <label className="k-input__label" htmlFor={inputId}>{label}</label>}
+      <div className="k-input__wrapper">
+        {leftIcon  && <span className="k-input__icon k-input__icon--left">{leftIcon}</span>}
+        <input
+          id={inputId}
+          className={fieldCls}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${inputId}-err` : undefined}
+          {...rest}
         />
-        <style>{`@keyframes k-spin { to { transform: rotate(360deg); } }`}</style>
-      </svg>
-      {label && (
-        <span style={{
-          fontSize: 11,
-          color: 'var(--k-text-secondary, #7a7f99)',
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
-        }}>
-          {label}
-        </span>
-      )}
+        {rightIcon && <span className="k-input__icon k-input__icon--right">{rightIcon}</span>}
+      </div>
+      {error  && <span id={`${inputId}-err`} className="k-input__error" role="alert">{error}</span>}
+      {!error && hint && <span className="k-input__hint">{hint}</span>}
     </div>
   )
 }
