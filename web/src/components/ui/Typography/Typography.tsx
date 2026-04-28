@@ -1,3 +1,4 @@
+// Typography.tsx
 import type { ReactNode, ElementType, CSSProperties } from 'react'
 
 export type TypographyVariant =
@@ -6,12 +7,12 @@ export type TypographyVariant =
   | 'caption' | 'label' | 'mono' | 'overline'
 
 export interface TypographyProps {
-  variant?:   TypographyVariant
-  as?:        ElementType
-  children:   ReactNode
-  color?:     'primary' | 'secondary' | 'muted' | 'accent' | 'danger' | 'success' | 'warning'
+  variant?: TypographyVariant
+  as?: ElementType
+  children: ReactNode
+  color?: 'primary' | 'secondary' | 'muted' | 'accent' | 'danger' | 'success' | 'warning'
   className?: string
-  truncate?:  boolean
+  truncate?: boolean
 }
 
 const variantStyles: Record<TypographyVariant, CSSProperties> = {
@@ -23,13 +24,18 @@ const variantStyles: Record<TypographyVariant, CSSProperties> = {
   'body-sm': { fontSize: 12, fontWeight: 400, letterSpacing: '0.01em',  lineHeight: 1.5 },
   caption:   { fontSize: 11, fontWeight: 400, letterSpacing: '0.02em',  lineHeight: 1.4 },
   label:     { fontSize: 11, fontWeight: 600, letterSpacing: '0.08em',  lineHeight: 1,   textTransform: 'uppercase' },
-  mono:      { fontSize: 12, fontWeight: 500, fontFamily: 'JetBrains Mono, monospace',   letterSpacing: '0.02em' },
+  mono:      { fontSize: 12, fontWeight: 500, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.02em' },
   overline:  { fontSize: 10, fontWeight: 700, letterSpacing: '0.12em',  lineHeight: 1,   textTransform: 'uppercase' },
 }
 
 const colorMap: Record<string, string> = {
-  primary: '#e8eaf0', secondary: '#7a7f99', muted: '#4a4f66',
-  accent: '#a891ff', danger: '#ff4d6a', success: '#4dffb8', warning: '#ffd24d',
+  primary: '#e8eaf0',
+  secondary: '#7a7f99',
+  muted: '#4a4f66',
+  accent: '#a891ff',
+  danger: '#ff4d6a',
+  success: '#4dffb8',
+  warning: '#ffd24d',
 }
 
 const defaultTag: Partial<Record<TypographyVariant, ElementType>> = {
@@ -37,14 +43,15 @@ const defaultTag: Partial<Record<TypographyVariant, ElementType>> = {
 }
 
 export function Typography({
-  variant   = 'body',
+  variant = 'body',
   as,
   children,
-  color     = 'primary',
+  color = 'primary',
   className = '',
-  truncate  = false,
+  truncate = false,
 }: TypographyProps) {
   const Tag = as ?? defaultTag[variant] ?? 'p'
+
   return (
     <Tag
       className={className}
@@ -52,7 +59,11 @@ export function Typography({
         margin: 0,
         ...variantStyles[variant],
         color: colorMap[color] ?? color,
-        ...(truncate ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}),
+        ...(truncate && {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }),
       }}
     >
       {children}

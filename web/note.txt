@@ -1,11 +1,9 @@
 Structure du dossier pour le volume New Volume
 Le numéro de série du volume est A0EE-043F
 D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
-|   App.css
 |   App.module.scss
 |   App.tsx
 |   dev-mock.ts
-|   index.css
 |   main.tsx
 |   
 +---assets
@@ -15,10 +13,7 @@ D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
 |       
 +---components
 |   |   index.ts
-|   |   Notifications.module.scss
-|   |   Notifications.tsx
 |   |   
-|   +---animations
 |   +---common
 |   |   +---Button
 |   |   |       Button.scss
@@ -49,71 +44,49 @@ D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
 |   |       \---UserCard
 |   |               UserCard.tsx
 |   |               
-|   +---hooks
-|   +---layout
-|   |   +---Footer
-|   |   |       Footer.tsx
-|   |   |       
-|   |   +---Header
-|   |   |       Header.tsx
-|   |   |       
-|   |   +---Navbar
-|   |   |       Navbar.tsx
-|   |   |       
-|   |   \---Sidebar
-|   |           Sidebar.tsx
-|   |           
-|   +---navigation
-|   |   +---Breadcrumb
-|   |   +---Menu
-|   |   |       Menu.module.scss
-|   |   |       Menu.tsx
-|   |   |       MenuFooter.module.scss
-|   |   |       MenuFooter.tsx
-|   |   |       MenuHeader.module.scss
-|   |   |       MenuHeader.tsx
-|   |   |       MenuItem.module.scss
-|   |   |       MenuItem.tsx
-|   |   |       
-|   |   \---Tabs
+|   +---Menu
+|   |       Menu.module.scss
+|   |       Menu.tsx
+|   |       MenuFooter.module.scss
+|   |       MenuFooter.tsx
+|   |       MenuHeader.module.scss
+|   |       MenuHeader.tsx
+|   |       MenuItem.module.scss
+|   |       MenuItem.tsx
+|   |       
 |   \---ui
 |       +---Avatar
 |       |       Avatar.tsx
-|       |       Index.ts
+|       |       index.ts
 |       |       
 |       +---Badge
-|       |       badge.tsx
+|       |       Badge.tsx
 |       |       index.ts
 |       |       
 |       +---Icon
-|       |       icon.tsx
+|       |       Icon.tsx
 |       |       index.ts
 |       |       
 |       +---Tooltip
-|       |       Index.ts
+|       |       index.ts
 |       |       Tooltip.tsx
 |       |       
 |       \---Typography
-|               Index.ts
+|               index.ts
 |               Typography.tsx
 |               
 +---core
 |   +---bridge
 |   +---devtools
-|   +---events
-|   \---nui
-|           nui.ts
-|           
+|   \---events
 +---hooks
 |       useKeyPress.ts
 |       useNUIMessage.ts
 |       
-+---providers
 +---styles
 |       global.scss
 |       _variables.scss
 |       
-+---theme
 +---types
 |       index.ts
 |       

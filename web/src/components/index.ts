@@ -13,7 +13,7 @@ export { Modal }   from './common/Modal/Modal'
 
 // ── UI primitives ─────────────────────────────────────────────────────────────
 export { Avatar }     from './ui/Avatar/Avatar'
-export { Badge }      from './ui/Badge/badge'
-export { Icon }       from './ui/Icon/icon'
+export { Badge }      from './ui/Badge/Badge'
+export { Icon }       from './ui/Icon/Icon'
 export { Tooltip }    from './ui/Tooltip/Tooltip'
 export { Typography } from './ui/Typography/Typography'

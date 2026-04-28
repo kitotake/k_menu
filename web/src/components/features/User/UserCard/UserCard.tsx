@@ -1,5 +1,5 @@
 import { Avatar }     from '../../../ui/Avatar/Avatar'
-import { Badge }      from '../../../ui/Badge/badge'
+import { Badge }      from '../../../ui/Badge/Badge'
 import { Typography } from '../../../ui/Typography/Typography'
 
 export interface UserCardProps {
