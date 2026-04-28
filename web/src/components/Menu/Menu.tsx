@@ -2,9 +2,9 @@ import { useState, useCallback, useEffect } from 'react'
 import type { MenuData, MenuItem } from '../types'
 import { sendNUICallback } from '../utils/nui'
 import { useKeyPress } from '../hooks/useKeyPress'
-import { MenuHeader } from './MenuHeader'
-import { MenuItemComponent } from './MenuItem'
-import { MenuFooter } from './MenuFooter'
+import { MenuHeader } from '../navigation/Menu/MenuHeader'
+import { MenuItemComponent } from '../navigation/Menu/MenuItem'
+import { MenuFooter } from '../navigation/Menu/MenuFooter'
 import styles from './Menu.module.scss'
 
 interface MenuProps {
