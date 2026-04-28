@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from 'react'
-import type { MenuData, MenuItem } from '../types'
-import { sendNUICallback } from '../utils/nui'
-import { useKeyPress } from '../hooks/useKeyPress'
-import { MenuHeader } from '../navigation/Menu/MenuHeader'
-import { MenuItemComponent } from '../navigation/Menu/MenuItem'
-import { MenuFooter } from '../navigation/Menu/MenuFooter'
+import type { MenuData, MenuItem } from '../../types'
+import { sendNUICallback } from '../../utils/nui'
+import { useKeyPress } from '../../hooks/useKeyPress'
+import { MenuHeader } from './MenuHeader'
+import { MenuItemComponent } from './MenuItem'
+import { MenuFooter } from './MenuFooter'
 import styles from './Menu.module.scss'
 
 interface MenuProps {
@@ -12,7 +12,6 @@ interface MenuProps {
   onClose: () => void
 }
 
-/** Returns indices of items that can be navigated to */
 function getNavigableIndices(items: MenuItem[]): number[] {
   return items
     .map((item, i) => ({ item, i }))
@@ -22,11 +21,10 @@ function getNavigableIndices(items: MenuItem[]): number[] {
 
 export function Menu({ menu, onClose }: MenuProps) {
   const navigable = getNavigableIndices(menu.items)
-  const [navIndex, setNavIndex] = useState(0) // index within navigable array
+  const [navIndex, setNavIndex] = useState(0)
 
   const selectedItemIndex = navigable[navIndex] ?? -1
 
-  // Reset selection when items change
   useEffect(() => {
     setNavIndex(0)
   }, [menu.id])
@@ -59,14 +57,12 @@ export function Menu({ menu, onClose }: MenuProps) {
     onClose()
   }, [menu.id, onClose])
 
-  // Keyboard bindings
-  useKeyPress('ArrowUp',  moveUp,    [])
-  useKeyPress('ArrowDown', moveDown,  [])
-  useKeyPress('Enter',    handleEnter, [handleEnter])
-  useKeyPress('Escape',   handleEscape, [handleEscape])
+  useKeyPress('ArrowUp',   moveUp,       [])
+  useKeyPress('ArrowDown', moveDown,     [])
+  useKeyPress('Enter',     handleEnter,  [handleEnter])
+  useKeyPress('Escape',    handleEscape, [handleEscape])
   useKeyPress('Backspace', handleEscape, [handleEscape])
 
-  // Count only navigable items for the counter display
   const navigableSelected = navigable.indexOf(selectedItemIndex)
 
   return (

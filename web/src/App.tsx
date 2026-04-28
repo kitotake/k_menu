@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import type { MenuData, NUIMessage } from './types'
 import { useNUIMessage } from './hooks/useNUIMessage'
-import { Menu } from './components/Menu'
+import { Menu } from './components/Menu/Menu'
 import styles from './App.module.scss'
 
 export default function App() {

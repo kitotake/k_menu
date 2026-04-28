@@ -1,14 +1,14 @@
 // ── Menu ──────────────────────────────────────────────────────────────────────
-export { Menu }              from './Menu'
-export { MenuHeader }        from './navigation/Menu/MenuHeader'
-export { MenuFooter }        from './navigation/Menu/MenuFooter'
-export { MenuItemComponent } from './navigation/Menu/MenuItem'
+export { Menu }              from './Menu/Menu'
+export { MenuHeader }        from './Menu/MenuHeader'
+export { MenuFooter }        from './Menu/MenuFooter'
+export { MenuItemComponent } from './Menu/MenuItem'
 
 // ── Common UI ─────────────────────────────────────────────────────────────────
-export { Button }  from './common/Button'
-export { Card }    from './common/Card'
-export { Input }   from './common/Input'
-export { Loader }  from './common/Loader'
+export { Button }  from './common/Button/Button'
+export { Card }    from './common/Card/Card'
+export { Input }   from './common/Input/Input'
+export { Loader }  from './common/Loader/Loader'
 export { Modal }   from './common/Modal/Modal'
 
 // ── UI primitives ─────────────────────────────────────────────────────────────

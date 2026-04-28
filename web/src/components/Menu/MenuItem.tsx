@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
-import type { MenuItem, InputItem, ButtonItem } from '../../../types'
-import { sendNUICallback } from '../../../utils/nui'
+import type { MenuItem, InputItem, ButtonItem } from '../../types'
+import { sendNUICallback } from '../../utils/nui'
 import styles from './MenuItem.module.scss'
 
 interface MenuItemProps {

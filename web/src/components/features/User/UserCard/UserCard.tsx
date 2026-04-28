@@ -1,14 +1,14 @@
-import { Avatar }     from '../../ui/Avatar/Avatar'
-import { Badge }      from '../../ui/Badge/Badge'
-import { Typography } from '../../ui/Typography/Typography'
+import { Avatar }     from '../../../ui/Avatar/Avatar'
+import { Badge }      from '../../../ui/Badge/badge'
+import { Typography } from '../../../ui/Typography/Typography'
 
 export interface UserCardProps {
-  name:       string
+  name:        string
   identifier?: string
-  avatar?:    string
-  status?:    'online' | 'offline' | 'busy' | 'away'
-  role?:      string
-  compact?:   boolean
+  avatar?:     string
+  status?:     'online' | 'offline' | 'busy' | 'away'
+  role?:       string
+  compact?:    boolean
 }
 
 export function UserCard({ name, identifier, avatar, status = 'online', role, compact = false }: UserCardProps) {
