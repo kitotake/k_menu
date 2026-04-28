@@ -1,6 +1,6 @@
-# 🚀 k_lib - Librairie de Menu pour FiveM
+# 🚀 k_Menu - Librairie de Menu pour FiveM
 
-Bienvenue dans **k_lib**, une librairie de menu NUI pour **FiveM**, utilisant **React, TypeScript et Lua**.  
+Bienvenue dans **k_Menu**, une librairie de menu NUI pour **FiveM**, utilisant **React, TypeScript et Lua**.  
 Ce projet permet aux développeurs de **créer facilement des menus interactifs** et de les intégrer à leurs scripts FiveM.
 
 ---
@@ -19,5 +19,5 @@ Ce projet permet aux développeurs de **créer facilement des menus interactifs*
 ### 🔹 **1. Télécharger le projet**
 Clone le dépôt sur ton serveur :
 ```sh
-git clone https://github.com/kitotake/k_lib.git
-cd k_lib
+git clone https://github.com/kitotake/k_Menu.git
+cd k_Menu
