@@ -1,0 +1,54 @@
+Structure du dossier pour le volume New Volume
+Le num�ro de s�rie du volume est A0EE-043F
+D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
+|   App.css
+|   App.tsx
+|   index.css
+|   main.tsx
+|   
++---assets
+|       hero.png
+|       react.svg
+|       vite.svg
+|       
+\---components
+    |   index.ts
+    |   
+    +---animations
+    +---common
+    |   +---Button
+    |   |       Button.scss
+    |   |       Button.tsx
+    |   |       index.ts
+    |   |       
+    |   +---Card
+    |   +---Input
+    |   +---Loader
+    |   \---Modal
+    +---features
+    |   +---Auth
+    |   |   +---LoginForm
+    |   |   \---RegisterForm
+    |   +---Inventory
+    |   |   +---DragDrop
+    |   |   +---InventoryGrid
+    |   |   \---InventoryItem
+    |   \---User
+    |       +---UserCard
+    |       \---UserProfile
+    +---hooks
+    +---layout
+    |   +---Footer
+    |   +---Header
+    |   +---Navbar
+    |   \---Sidebar
+    +---navigation
+    |   +---Breadcrumb
+    |   +---Menu
+    |   \---Tabs
+    \---ui
+        +---Avatar
+        +---Badge
+        +---Icon
+        +---Tooltip
+        \---Typography
