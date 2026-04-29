@@ -55,24 +55,21 @@ D:\NEW\FIVEM\UNION_FIVEM\RESOURCES\[SERVER]\K_MENU\WEB\SRC
 |   |       MenuItem.tsx
 |   |       
 |   \---ui
+|       |   index.ts
+|       |   
 |       +---Avatar
 |       |       Avatar.tsx
-|       |       index.ts
 |       |       
 |       +---Badge
 |       |       Badge.tsx
-|       |       index.ts
 |       |       
 |       +---Icon
 |       |       Icon.tsx
-|       |       index.ts
 |       |       
 |       +---Tooltip
-|       |       index.ts
 |       |       Tooltip.tsx
 |       |       
 |       \---Typography
-|               index.ts
 |               Typography.tsx
 |               
 +---core
