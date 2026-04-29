@@ -1,13 +1,12 @@
 @use '../../styles/variables' as *;
 @use '../../styles/global';
 
-
 .footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  padding: 8px 16px;
+  gap: 14px;
+  padding: 7px 14px;
   border-top: 1px solid $border-color;
   background: $bg-header;
   flex-shrink: 0;
@@ -16,19 +15,21 @@
 .hint {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10px;
+  gap: 4px;
+  font-size: 9px;
   color: $text-muted;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .key {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid $border-color;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom-width: 2px;
   border-radius: 4px;
   padding: 1px 5px;
   font-family: $font-mono;
@@ -38,4 +39,5 @@
   min-width: 18px;
   text-align: center;
   font-style: normal;
+  line-height: 1.4;
 }

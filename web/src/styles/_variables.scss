@@ -1,43 +1,43 @@
-// ── Palette ───────────────────────────────────────────────────────────────────
-$bg-menu:        #0d0e12;
-$bg-header:      #111318;
-$bg-item:        #13151c;
-$bg-item-hover:  #1a1d27;
-$bg-item-active: #1e2130;
-$bg-input:       #0a0b0f;
-$bg-separator:   #1c1f2a;
+// ── Palette — thème clair/givré ───────────────────────────────────────────────
+$bg-menu:        rgba(15, 16, 22, 0.92);
+$bg-header:      rgba(18, 20, 28, 0.95);
+$bg-item:        transparent;
+$bg-item-hover:  rgba(255, 255, 255, 0.05);
+$bg-item-active: rgba(255, 255, 255, 0.08);
+$bg-input:       rgba(0, 0, 0, 0.3);
+$bg-separator:   transparent;
 
-$border-color:   rgba(255, 255, 255, 0.06);
-$border-accent:  rgba(130, 100, 255, 0.5);
+$border-color:   rgba(255, 255, 255, 0.07);
+$border-accent:  rgba(110, 180, 255, 0.4);
 
-$text-primary:   #e8eaf0;
-$text-secondary: #7a7f99;
-$text-muted:     #4a4f66;
-$text-disabled:  #383c52;
+$text-primary:   #f0f2f8;
+$text-secondary: #6e758f;
+$text-muted:     #3d4260;
+$text-disabled:  #2e3250;
 
-$accent:         #8264ff;
-$accent-glow:    rgba(130, 100, 255, 0.25);
-$accent-light:   #a891ff;
+$accent:         #5b9cf6;
+$accent-glow:    rgba(91, 156, 246, 0.2);
+$accent-light:   #8db8fb;
 
-$danger:         #ff4d6a;
-$danger-glow:    rgba(255, 77, 106, 0.2);
-$success:        #4dffb8;
-$success-glow:   rgba(77, 255, 184, 0.2);
-$warning:        #ffd24d;
-$warning-glow:   rgba(255, 210, 77, 0.2);
+$danger:         #f06070;
+$danger-glow:    rgba(240, 96, 112, 0.18);
+$success:        #52d9a0;
+$success-glow:   rgba(82, 217, 160, 0.18);
+$warning:        #f0c060;
+$warning-glow:   rgba(240, 192, 96, 0.18);
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
-$menu-width:     360px;
-$menu-max-height: 540px;
-$header-height:  70px;
-$item-height:    46px;
-$border-radius:  10px;
-$item-radius:    6px;
+$menu-width:      340px;
+$menu-max-height: 500px;
+$header-height:   64px;
+$item-height:     40px;
+$border-radius:   12px;
+$item-radius:     6px;
 
 // ── Transitions ───────────────────────────────────────────────────────────────
-$transition-fast:   0.12s ease;
-$transition-normal: 0.2s ease;
-$transition-slow:   0.3s cubic-bezier(0.16, 1, 0.3, 1);
+$transition-fast:   0.1s ease;
+$transition-normal: 0.18s ease;
+$transition-slow:   0.28s cubic-bezier(0.16, 1, 0.3, 1);
 
 // ── Fonts ─────────────────────────────────────────────────────────────────────
 $font-ui:    'Rajdhani', 'Segoe UI', system-ui, sans-serif;

@@ -11,42 +11,26 @@
   border-radius: $border-radius;
   overflow: hidden;
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 0 60px rgba(0, 0, 0, 0.4);
-  animation: slideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-
-  // Subtle scanline texture
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.008) 2px,
-      rgba(255, 255, 255, 0.008) 4px
-    );
-    pointer-events: none;
-    border-radius: $border-radius;
-    z-index: 10;
-  }
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  animation: slideIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .itemList {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 6px 0;
+  padding: 4px 0 4px;
   scroll-behavior: smooth;
 
-  // Fade at top/bottom
   mask-image: linear-gradient(
     to bottom,
     transparent 0px,
-    black 8px,
-    black calc(100% - 8px),
+    black 6px,
+    black calc(100% - 6px),
     transparent 100%
   );
 }

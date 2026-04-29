@@ -1,20 +1,21 @@
 @use '../../styles/variables' as *;
 @use '../../styles/global';
 
-// ── Separator ─────────────────────────────────────────────────────────────────
+// ── Separator ──────────────────────────────────────────────────────────────────
 .separator {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 4px 12px;
   pointer-events: none;
+  margin: 2px 0;
 }
 
 .separatorLabel {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   color: $text-muted;
   white-space: nowrap;
   flex-shrink: 0;
@@ -26,48 +27,47 @@
   background: $border-color;
 }
 
-// ── Title ─────────────────────────────────────────────────────────────────────
+// ── Title ──────────────────────────────────────────────────────────────────────
 .title {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: 6px;
+  padding: 8px 12px 4px;
   pointer-events: none;
 }
 
 .titleDot {
-  width: 14px;
+  flex: 1;
   height: 1px;
-  background: linear-gradient(to right, transparent, $accent);
+  background: linear-gradient(to right, transparent, rgba($accent, 0.2));
 
   &:last-child {
-    background: linear-gradient(to left, transparent, $accent);
+    background: linear-gradient(to left, transparent, rgba($accent, 0.2));
   }
 }
 
 .titleText {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: $accent-light;
+  color: rgba($accent-light, 0.6);
+  flex-shrink: 0;
 }
 
-// ── Item base ─────────────────────────────────────────────────────────────────
+// ── Item base ──────────────────────────────────────────────────────────────────
 .item {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 14px;
+  gap: 8px;
+  padding: 0 12px;
   height: $item-height;
   cursor: pointer;
   transition:
-    background-color $transition-fast,
-    opacity $transition-fast;
+    background-color $transition-fast;
   border-radius: $item-radius;
-  margin: 1px 6px;
+  margin: 1px 5px;
 
   &:hover:not(.disabled) {
     background: $bg-item-hover;
@@ -78,7 +78,7 @@
   }
 }
 
-// ── Selected state ────────────────────────────────────────────────────────────
+// ── Selected state ─────────────────────────────────────────────────────────────
 .selected {
   background: $bg-item-hover !important;
 
@@ -93,30 +93,34 @@
   top: 50%;
   transform: translateY(-50%);
   width: 2px;
-  height: 60%;
+  height: 55%;
   background: $accent;
   border-radius: 0 2px 2px 0;
-  box-shadow: 0 0 8px $accent-glow;
+  box-shadow: 0 0 6px $accent-glow;
 }
 
-// ── Disabled state ────────────────────────────────────────────────────────────
+// ── Disabled ───────────────────────────────────────────────────────────────────
 .disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-// ── Icon ─────────────────────────────────────────────────────────────────────
+// ── Icon ───────────────────────────────────────────────────────────────────────
 .icon {
-  font-size: 16px;
-  width: 20px;
+  font-size: 14px;
+  width: 18px;
   text-align: center;
   flex-shrink: 0;
-  color: $text-secondary;
   line-height: 1;
+  opacity: 0.7;
+
+  .selected & {
+    opacity: 1;
+  }
 }
 
-// ── Content ───────────────────────────────────────────────────────────────────
+// ── Content ────────────────────────────────────────────────────────────────────
 .content {
   flex: 1;
   min-width: 0;
@@ -126,14 +130,14 @@
 }
 
 .label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: $text-secondary;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: color $transition-fast;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 
   .selected & {
     color: $text-primary;
@@ -146,10 +150,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
-// ── Right side ────────────────────────────────────────────────────────────────
+// ── Right side ─────────────────────────────────────────────────────────────────
 .right {
   flex-shrink: 0;
   display: flex;
@@ -158,56 +162,56 @@
 
 .rightLabel {
   font-family: $font-mono;
-  font-size: 12px;
-  color: $text-secondary;
-  background: rgba(255, 255, 255, 0.05);
+  font-size: 10px;
+  color: $text-muted;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid $border-color;
   border-radius: 4px;
-  padding: 2px 8px;
+  padding: 2px 6px;
   letter-spacing: 0.02em;
 
   .selected & {
-    border-color: rgba($accent, 0.3);
+    border-color: rgba($accent, 0.25);
     color: $accent-light;
   }
 }
 
 .arrow {
-  font-size: 18px;
+  font-size: 16px;
   color: $text-muted;
   transition: color $transition-fast, transform $transition-fast;
   line-height: 1;
+  opacity: 0.5;
 
   .selected & {
     color: $accent;
+    opacity: 1;
     transform: translateX(2px);
   }
 }
 
-// ── Input ─────────────────────────────────────────────────────────────────────
+// ── Input ──────────────────────────────────────────────────────────────────────
 .input {
   font-family: $font-mono;
-  font-size: 12px;
-  background: $bg-input;
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid $border-accent;
   border-radius: 4px;
   color: $text-primary;
-  padding: 4px 8px;
-  width: 130px;
+  padding: 3px 7px;
+  width: 120px;
   outline: none;
-  box-shadow: 0 0 10px rgba($accent, 0.15);
   transition: border-color $transition-fast, box-shadow $transition-fast;
 
   &:focus {
     border-color: $accent;
-    box-shadow: 0 0 16px rgba($accent, 0.25);
+    box-shadow: 0 0 10px rgba($accent, 0.2);
   }
 
   &::placeholder {
     color: $text-muted;
   }
 
-  /* Remove number arrows */
   &[type='number'] {
     appearance: textfield;
     &::-webkit-outer-spin-button,
@@ -217,9 +221,9 @@
 
 .inputPreview {
   font-family: $font-mono;
-  font-size: 12px;
+  font-size: 11px;
   color: $text-secondary;
-  max-width: 130px;
+  max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -230,15 +234,15 @@
   font-style: italic;
 }
 
-// ── Color variants ────────────────────────────────────────────────────────────
+// ── Color variants ─────────────────────────────────────────────────────────────
 .color_danger {
   .label { color: $danger; }
   &.selected {
-    background: rgba($danger, 0.08) !important;
+    background: rgba($danger, 0.06) !important;
     .label { color: $danger; }
     .selectedBar {
       background: $danger;
-      box-shadow: 0 0 8px $danger-glow;
+      box-shadow: 0 0 6px $danger-glow;
     }
   }
 }
@@ -246,11 +250,11 @@
 .color_success {
   .label { color: $success; }
   &.selected {
-    background: rgba($success, 0.08) !important;
+    background: rgba($success, 0.06) !important;
     .label { color: $success; }
     .selectedBar {
       background: $success;
-      box-shadow: 0 0 8px $success-glow;
+      box-shadow: 0 0 6px $success-glow;
     }
   }
 }
@@ -258,11 +262,11 @@
 .color_warning {
   .label { color: $warning; }
   &.selected {
-    background: rgba($warning, 0.06) !important;
+    background: rgba($warning, 0.05) !important;
     .label { color: $warning; }
     .selectedBar {
       background: $warning;
-      box-shadow: 0 0 8px $warning-glow;
+      box-shadow: 0 0 6px $warning-glow;
     }
   }
 }

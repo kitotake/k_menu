@@ -1,5 +1,4 @@
 @use '../../styles/variables' as *;
-@use '../../styles/variables' as *;
 @use '../../styles/global';
 
 .header {
@@ -11,7 +10,7 @@
 
 .banner {
   position: relative;
-  height: 80px;
+  height: 70px;
   overflow: hidden;
 
   img {
@@ -19,6 +18,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 0.7;
   }
 }
 
@@ -27,21 +27,21 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba($bg-header, 0.2) 0%,
-    rgba($bg-header, 0.9) 100%
+    rgba($bg-header, 0.1) 0%,
+    rgba($bg-header, 0.95) 100%
   );
 }
 
 .content {
-  padding: 10px 16px 0;
+  padding: 12px 14px 0;
   background: $bg-header;
 }
 
 .titleRow {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   padding-bottom: 10px;
 }
 
@@ -50,86 +50,91 @@
   flex: 1;
 }
 
-// ── Indicateur retour arrière ─────────────────────────────────────────────────
+// ── Back indicator ─────────────────────────────────────────────────────────────
 .backHint {
   display: flex;
   align-items: center;
-  gap: 3px;
-  margin-bottom: 4px;
+  gap: 4px;
+  margin-bottom: 3px;
+  opacity: 0.6;
 }
 
 .backArrow {
-  font-size: 13px;
+  font-size: 11px;
   color: $accent;
-  line-height: 1;
 }
 
 .backLabel {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: $text-muted;
 }
 
-// ── Titre ─────────────────────────────────────────────────────────────────────
+// ── Title ──────────────────────────────────────────────────────────────────────
 .title {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: $text-primary;
-  line-height: 1.1;
+  line-height: 1.15;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .subtitle {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
-  color: $text-secondary;
-  letter-spacing: 0.03em;
-  margin-top: 3px;
+  color: $text-muted;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-// ── Compteur ──────────────────────────────────────────────────────────────────
+// ── Counter ────────────────────────────────────────────────────────────────────
 .counter {
   display: flex;
-  align-items: baseline;
-  gap: 2px;
+  align-items: center;
+  gap: 1px;
   font-family: $font-mono;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  padding: 3px 7px;
   flex-shrink: 0;
 }
 
 .counterCurrent {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: $accent-light;
 }
 
 .counterSep {
-  font-size: 12px;
+  font-size: 10px;
   color: $text-muted;
+  margin: 0 1px;
 }
 
 .counterTotal {
-  font-size: 12px;
+  font-size: 11px;
   color: $text-secondary;
 }
 
-// ── Ligne accent ──────────────────────────────────────────────────────────────
+// ── Accent line ────────────────────────────────────────────────────────────────
 .accentLine {
-  height: 2px;
+  height: 1px;
   background: linear-gradient(
     to right,
     $accent 0%,
-    rgba($accent, 0.4) 60%,
+    rgba($accent, 0.2) 50%,
     transparent 100%
   );
-  margin: 0 -16px;
-  border-radius: 1px;
+  margin: 0 -14px;
+  opacity: 0.6;
 }
