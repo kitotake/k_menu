@@ -1,4 +1,5 @@
 @use '../../styles/variables' as *;
+@use '../../styles/variables' as *;
 @use '../../styles/global';
 
 .header {
@@ -32,7 +33,7 @@
 }
 
 .content {
-  padding: 14px 16px 0;
+  padding: 10px 16px 0;
   background: $bg-header;
 }
 
@@ -41,7 +42,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  padding-bottom: 12px;
+  padding-bottom: 10px;
 }
 
 .titleGroup {
@@ -49,6 +50,29 @@
   flex: 1;
 }
 
+// ── Indicateur retour arrière ─────────────────────────────────────────────────
+.backHint {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.backArrow {
+  font-size: 13px;
+  color: $accent;
+  line-height: 1;
+}
+
+.backLabel {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $text-muted;
+}
+
+// ── Titre ─────────────────────────────────────────────────────────────────────
 .title {
   font-size: 18px;
   font-weight: 700;
@@ -72,6 +96,7 @@
   text-overflow: ellipsis;
 }
 
+// ── Compteur ──────────────────────────────────────────────────────────────────
 .counter {
   display: flex;
   align-items: baseline;
@@ -96,6 +121,7 @@
   color: $text-secondary;
 }
 
+// ── Ligne accent ──────────────────────────────────────────────────────────────
 .accentLine {
   height: 2px;
   background: linear-gradient(

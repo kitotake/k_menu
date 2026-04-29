@@ -6,9 +6,10 @@ interface MenuHeaderProps {
   banner?: string
   itemCount: number
   selectedIndex: number
+  showBack?: boolean
 }
 
-export function MenuHeader({ title, subtitle, banner, itemCount, selectedIndex }: MenuHeaderProps) {
+export function MenuHeader({ title, subtitle, banner, itemCount, selectedIndex, showBack = false }: MenuHeaderProps) {
   return (
     <div className={styles.header}>
       {banner && (
@@ -20,6 +21,12 @@ export function MenuHeader({ title, subtitle, banner, itemCount, selectedIndex }
       <div className={styles.content}>
         <div className={styles.titleRow}>
           <div className={styles.titleGroup}>
+            {showBack && (
+              <div className={styles.backHint}>
+                <span className={styles.backArrow}>‹</span>
+                <span className={styles.backLabel}>Retour</span>
+              </div>
+            )}
             <h1 className={styles.title}>{title}</h1>
             {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
           </div>

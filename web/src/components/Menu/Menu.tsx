@@ -10,6 +10,8 @@ import styles from './Menu.module.scss'
 interface MenuProps {
   menu: MenuData
   onClose: () => void
+  onBack: () => void
+  isRoot: boolean
 }
 
 function getNavigableIndices(items: MenuItem[]): number[] {
@@ -19,7 +21,7 @@ function getNavigableIndices(items: MenuItem[]): number[] {
     .map(({ i }) => i)
 }
 
-export function Menu({ menu, onClose }: MenuProps) {
+export function Menu({ menu, onClose, onBack, isRoot }: MenuProps) {
   const navigable = getNavigableIndices(menu.items)
   const [navIndex, setNavIndex] = useState(0)
 
@@ -52,16 +54,22 @@ export function Menu({ menu, onClose }: MenuProps) {
     }
   }, [menu.items, selectedItemIndex, activate])
 
+  // Échap → ferme tout
   const handleEscape = useCallback(() => {
     sendNUICallback('closeMenu', { menuId: menu.id })
     onClose()
   }, [menu.id, onClose])
 
+  // Backspace → revient en arrière d'un niveau (ou ferme si root)
+  const handleBack = useCallback(() => {
+    onBack()
+  }, [onBack])
+
   useKeyPress('ArrowUp',   moveUp,       [])
   useKeyPress('ArrowDown', moveDown,     [])
   useKeyPress('Enter',     handleEnter,  [handleEnter])
   useKeyPress('Escape',    handleEscape, [handleEscape])
-  useKeyPress('Backspace', handleEscape, [handleEscape])
+  useKeyPress('Backspace', handleBack,   [handleBack])
 
   const navigableSelected = navigable.indexOf(selectedItemIndex)
 
@@ -73,6 +81,7 @@ export function Menu({ menu, onClose }: MenuProps) {
         banner={menu.banner}
         itemCount={navigable.length}
         selectedIndex={Math.max(0, navigableSelected)}
+        showBack={!isRoot}
       />
 
       <div className={styles.itemList}>
@@ -91,7 +100,7 @@ export function Menu({ menu, onClose }: MenuProps) {
         ))}
       </div>
 
-      <MenuFooter />
+      <MenuFooter isRoot={isRoot} />
     </div>
   )
 }

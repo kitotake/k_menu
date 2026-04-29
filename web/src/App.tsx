@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import type { MenuData, NUIMessage } from './types'
 import { useNUIMessage } from './hooks/useNUIMessage'
+import { sendNUICallback } from './utils/nui'
 import { Menu } from './components/Menu/Menu'
 import styles from './App.module.scss'
 
@@ -19,12 +20,14 @@ export default function App() {
           items:    msg.items   ?? [],
         }
         setMenus(prev => {
+          // Si le menu existe déjà dans le stack, on le met à jour sur place
           const exists = prev.findIndex(m => m.id === newMenu.id)
           if (exists !== -1) {
             const updated = [...prev]
             updated[exists] = newMenu
             return updated
           }
+          // Sinon on empile
           return [...prev, newMenu]
         })
         break
@@ -43,8 +46,14 @@ export default function App() {
 
       case 'closeMenu': {
         if (msg.menuId) {
-          setMenus(prev => prev.filter(m => m.id !== msg.menuId))
+          // Ferme un menu spécifique et tout ce qui est au-dessus dans le stack
+          setMenus(prev => {
+            const idx = prev.findIndex(m => m.id === msg.menuId)
+            if (idx === -1) return prev
+            return prev.slice(0, idx)
+          })
         } else {
+          // Ferme tout
           setMenus([])
         }
         break
@@ -57,10 +66,28 @@ export default function App() {
 
   useNUIMessage(handleMessage)
 
+  // Appelé quand Échap est pressé dans le menu actif
   const handleClose = useCallback((menuId: string) => {
     setMenus(prev => {
       const idx = prev.findIndex(m => m.id === menuId)
       if (idx === -1) return prev
+      // Retire ce menu et tout ce qui est au-dessus
+      return prev.slice(0, idx)
+    })
+  }, [])
+
+  // Appelé quand Backspace est pressé → retour d'un niveau
+  const handleBack = useCallback((menuId: string) => {
+    setMenus(prev => {
+      const idx = prev.findIndex(m => m.id === menuId)
+      if (idx === -1) return prev
+      if (idx === 0) {
+        // Dernier menu → ferme tout + notifie Lua
+        sendNUICallback('closeMenu', { menuId })
+        return []
+      }
+      // Sinon retire juste le menu actif (revient au précédent)
+      sendNUICallback('goBack', { menuId })
       return prev.slice(0, idx)
     })
   }, [])
@@ -76,6 +103,8 @@ export default function App() {
               key={activeMenu.id}
               menu={activeMenu}
               onClose={() => handleClose(activeMenu.id)}
+              onBack={() => handleBack(activeMenu.id)}
+              isRoot={menus.length === 1}
             />
           </div>
         </div>

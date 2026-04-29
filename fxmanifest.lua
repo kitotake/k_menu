@@ -14,9 +14,13 @@ files {
 }
 
 client_scripts {
-    'client/main.lua'
+    'client/main.lua',
+    'client/admin.lua',       -- menu + navigation
+    'client/admin_effects.lua', -- effets locaux
+    'client/noclip.lua'
 }
 
 server_scripts {
-    'server/main.lua'
+    'server/main.lua',
+    'server/admin.lua'        -- vérif perms + dispatch
 }
