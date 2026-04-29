@@ -1,13 +1,18 @@
 /**
  * Send a callback to FiveM Lua
  */
-export async function sendNUICallback(event: string, data: unknown = {}): Promise<unknown> {
+export async function sendNUICallback(event: string, data: unknown = {}) {
   const resp = await fetch(`https://${getResourceName()}/${event}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-  return resp.json()
+
+  try {
+    return await resp.json()
+  } catch {
+    return null
+  }
 }
 
 /**
