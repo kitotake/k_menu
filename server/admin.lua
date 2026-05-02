@@ -5,9 +5,8 @@
 -- 🔹 CONFIG — liste des admins (Steam IDs ou License)
 -- ============================================================
 local ADMIN_IDS = {
-    "license:5dd163d48114f6f827098ac7b57fdad1c087f5bb", -- Remplace par ta license
-    "steam:11000010xxxxxxxx",                          -- Ou Steam ID
-    -- Ajoute autant d'admins que nécessaire
+    "license:5dd163d48114f6f827098ac7b57fdad1c087f5bb",
+    "steam:11000010xxxxxxxx",
 }
 
 local timeFrozen = false
@@ -36,7 +35,7 @@ local function notify(src, msg, type)
 end
 
 -- ============================================================
--- 🔹 VÉRIF ADMIN — ouvre le menu côté client si OK
+-- 🔹 VÉRIF ADMIN
 -- ============================================================
 RegisterNetEvent('k_menu:checkAdmin', function()
     local src = source
@@ -53,7 +52,6 @@ end)
 RegisterNetEvent('k_menu:admin', function(action, arg1, arg2, arg3)
     local src = source
 
-    -- Sécurité : vérif admin à chaque action
     if not isAdmin(src) then
         notify(src, "Permission refusée.", 'error')
         return
@@ -83,9 +81,7 @@ RegisterNetEvent('k_menu:admin', function(action, arg1, arg2, arg3)
         end
         notify(src, "Tous les joueurs ont été soignés.", 'success')
 
-    -- ── Joueur ciblé ────────────────────────────────────────
     elseif action == "tpToPlayer" then
-        -- tp admin -> joueur (géré client-side via coords)
         TriggerClientEvent('k_menu:adminTpToPlayer', src)
 
     elseif action == "bringPlayer" then
@@ -157,11 +153,20 @@ RegisterNetEvent('k_menu:admin', function(action, arg1, arg2, arg3)
 
     -- ── Météo ────────────────────────────────────────────────
     elseif action == "setWeather" then
-        TriggerClientEvent('k_menu:adminSetWeather', -1, arg1) -- -1 = tous les joueurs
+        TriggerClientEvent('k_menu:adminSetWeather', -1, arg1)
         notify(src, "Météo changée : " .. arg1, 'success')
 
+    -- FIX: setTime reçoit maintenant h et m depuis le client
     elseif action == "setTime" then
-        TriggerClientEvent('k_menu:adminSetTime', src)
+        local h = tonumber(arg1) or 12
+        local m = tonumber(arg2) or 0
+        -- Clamp valeurs valides
+        h = math.max(0, math.min(23, h))
+        m = math.max(0, math.min(59, m))
+        frozenHour = h
+        frozenMin  = m
+        TriggerClientEvent('k_menu:adminApplyTime', -1, h, m)
+        notify(src, ("Heure définie : %02d:%02d"):format(h, m), 'success')
 
     elseif action == "freezeTime" then
         timeFrozen = arg1
@@ -188,9 +193,6 @@ end)
 RegisterNetEvent('k_menu:adminDoPermban', function(targetId, reason)
     local src = source
     if not isAdmin(src) then return end
-    -- Récupère les identifiants et ban (à adapter selon ton système)
-    local ids = GetPlayerIdentifiers(targetId)
-    -- Tu peux ici sauvegarder en DB ou utiliser ton système de ban existant
     DropPlayer(targetId, "BAN PERMANENT: " .. (reason or "Aucune raison"))
     print("^1[admin] BAN PERMANENT " .. GetPlayerName(targetId) .. " par " .. GetPlayerName(src))
     notify(src, "Joueur banni définitivement.", 'success')

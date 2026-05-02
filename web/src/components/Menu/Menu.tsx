@@ -54,22 +54,20 @@ export function Menu({ menu, onClose, onBack, isRoot }: MenuProps) {
     }
   }, [menu.items, selectedItemIndex, activate])
 
-  // Échap → ferme tout
   const handleEscape = useCallback(() => {
     sendNUICallback('closeMenu', { menuId: menu.id })
     onClose()
   }, [menu.id, onClose])
 
-  // Backspace → revient en arrière d'un niveau (ou ferme si root)
   const handleBack = useCallback(() => {
     onBack()
   }, [onBack])
 
-  useKeyPress('ArrowUp',   moveUp,       [])
-  useKeyPress('ArrowDown', moveDown,     [])
-  useKeyPress('Enter',     handleEnter,  [handleEnter])
-  useKeyPress('Escape',    handleEscape, [handleEscape])
-  useKeyPress('Backspace', handleBack,   [handleBack])
+  useKeyPress('ArrowUp',   moveUp)
+  useKeyPress('ArrowDown', moveDown)
+  useKeyPress('Enter',     handleEnter)
+  useKeyPress('Escape',    handleEscape)
+  useKeyPress('Backspace', handleBack)
 
   const navigableSelected = navigable.indexOf(selectedItemIndex)
 

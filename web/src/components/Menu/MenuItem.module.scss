@@ -1,5 +1,4 @@
 @use '../../styles/variables' as *;
-@use '../../styles/global';
 
 // ── Separator ──────────────────────────────────────────────────────────────────
 .separator {
@@ -21,11 +20,7 @@
   flex-shrink: 0;
 }
 
-.separatorLine {
-  flex: 1;
-  height: 1px;
-  background: $border-color;
-}
+.separatorLine { flex: 1; height: 1px; background: $border-color; }
 
 // ── Title ──────────────────────────────────────────────────────────────────────
 .title {
@@ -40,10 +35,7 @@
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, transparent, rgba($accent, 0.2));
-
-  &:last-child {
-    background: linear-gradient(to left, transparent, rgba($accent, 0.2));
-  }
+  &:last-child { background: linear-gradient(to left, transparent, rgba($accent, 0.2)); }
 }
 
 .titleText {
@@ -64,27 +56,17 @@
   padding: 0 12px;
   height: $item-height;
   cursor: pointer;
-  transition:
-    background-color $transition-fast;
+  transition: background-color $transition-fast;
   border-radius: $item-radius;
   margin: 1px 5px;
 
-  &:hover:not(.disabled) {
-    background: $bg-item-hover;
-  }
-
-  &:active:not(.disabled) {
-    background: $bg-item-active;
-  }
+  &:hover:not(.disabled)  { background: $bg-item-hover; }
+  &:active:not(.disabled) { background: $bg-item-active; }
 }
 
-// ── Selected state ─────────────────────────────────────────────────────────────
 .selected {
   background: $bg-item-hover !important;
-
-  .label {
-    color: $text-primary;
-  }
+  .label { color: $text-primary; }
 }
 
 .selectedBar {
@@ -99,14 +81,8 @@
   box-shadow: 0 0 6px $accent-glow;
 }
 
-// ── Disabled ───────────────────────────────────────────────────────────────────
-.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  pointer-events: none;
-}
+.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
-// ── Icon ───────────────────────────────────────────────────────────────────────
 .icon {
   font-size: 14px;
   width: 18px;
@@ -114,20 +90,10 @@
   flex-shrink: 0;
   line-height: 1;
   opacity: 0.7;
-
-  .selected & {
-    opacity: 1;
-  }
+  .selected & { opacity: 1; }
 }
 
-// ── Content ────────────────────────────────────────────────────────────────────
-.content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
+.content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 
 .label {
   font-size: 13px;
@@ -138,10 +104,7 @@
   text-overflow: ellipsis;
   transition: color $transition-fast;
   letter-spacing: 0.01em;
-
-  .selected & {
-    color: $text-primary;
-  }
+  .selected & { color: $text-primary; }
 }
 
 .description {
@@ -153,12 +116,7 @@
   letter-spacing: 0.01em;
 }
 
-// ── Right side ─────────────────────────────────────────────────────────────────
-.right {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
+.right { flex-shrink: 0; display: flex; align-items: center; }
 
 .rightLabel {
   font-family: $font-mono;
@@ -169,11 +127,7 @@
   border-radius: 4px;
   padding: 2px 6px;
   letter-spacing: 0.02em;
-
-  .selected & {
-    border-color: rgba($accent, 0.25);
-    color: $accent-light;
-  }
+  .selected & { border-color: rgba($accent, 0.25); color: $accent-light; }
 }
 
 .arrow {
@@ -182,12 +136,7 @@
   transition: color $transition-fast, transform $transition-fast;
   line-height: 1;
   opacity: 0.5;
-
-  .selected & {
-    color: $accent;
-    opacity: 1;
-    transform: translateX(2px);
-  }
+  .selected & { color: $accent; opacity: 1; transform: translateX(2px); }
 }
 
 // ── Input ──────────────────────────────────────────────────────────────────────
@@ -202,16 +151,8 @@
   width: 120px;
   outline: none;
   transition: border-color $transition-fast, box-shadow $transition-fast;
-
-  &:focus {
-    border-color: $accent;
-    box-shadow: 0 0 10px rgba($accent, 0.2);
-  }
-
-  &::placeholder {
-    color: $text-muted;
-  }
-
+  &:focus { border-color: $accent; box-shadow: 0 0 10px rgba($accent, 0.2); }
+  &::placeholder { color: $text-muted; }
   &[type='number'] {
     appearance: textfield;
     &::-webkit-outer-spin-button,
@@ -229,10 +170,7 @@
   white-space: nowrap;
 }
 
-.inputPlaceholder {
-  color: $text-muted;
-  font-style: italic;
-}
+.inputPlaceholder { color: $text-muted; font-style: italic; }
 
 // ── Color variants ─────────────────────────────────────────────────────────────
 .color_danger {
@@ -240,10 +178,7 @@
   &.selected {
     background: rgba($danger, 0.06) !important;
     .label { color: $danger; }
-    .selectedBar {
-      background: $danger;
-      box-shadow: 0 0 6px $danger-glow;
-    }
+    .selectedBar { background: $danger; box-shadow: 0 0 6px $danger-glow; }
   }
 }
 
@@ -252,10 +187,7 @@
   &.selected {
     background: rgba($success, 0.06) !important;
     .label { color: $success; }
-    .selectedBar {
-      background: $success;
-      box-shadow: 0 0 6px $success-glow;
-    }
+    .selectedBar { background: $success; box-shadow: 0 0 6px $success-glow; }
   }
 }
 
@@ -264,9 +196,6 @@
   &.selected {
     background: rgba($warning, 0.05) !important;
     .label { color: $warning; }
-    .selectedBar {
-      background: $warning;
-      box-shadow: 0 0 6px $warning-glow;
-    }
+    .selectedBar { background: $warning; box-shadow: 0 0 6px $warning-glow; }
   }
 }

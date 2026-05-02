@@ -13,7 +13,17 @@ interface MenuItemProps {
 
 export function MenuItemComponent({ item, isSelected, index, onHover, onActivate }: MenuItemProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const [inputValue, setInputValue] = useState((item as InputItem).value ?? '')
+
+  // FIX: réinitialiser inputValue quand l'item change (id différent)
+  const [inputValue, setInputValue] = useState(
+    item.type === 'input' ? ((item as InputItem).value ?? '') : ''
+  )
+
+  useEffect(() => {
+    if (item.type === 'input') {
+      setInputValue((item as InputItem).value ?? '')
+    }
+  }, [item.id, item.type]) // se réinitialise si l'item change
 
   // Scroll into view when selected
   useEffect(() => {

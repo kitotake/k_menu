@@ -1,8 +1,6 @@
 /**
  * Dev helper – fire fake NUI messages from the browser console
  * Usage: import './dev-mock' in main.tsx during dev only
- *
- * Or call window.__kMenu.openDemo() in the browser console.
  */
 import type { NUIMessage } from './types'
 
@@ -25,10 +23,10 @@ w.__kMenu = {
         { id: '1', type: 'button', label: 'Réparer le véhicule', icon: '🔧', description: 'Répare votre véhicule actuel', rightLabel: 'Gratuit' },
         { id: '2', type: 'button', label: 'Laver le véhicule', icon: '🚿', description: '250$', rightLabel: '250 $' },
         { id: 'sep1', type: 'separator', label: 'Gestion' },
-        { id: '3', type: 'button', label: 'Ouvrir l\'inventaire', icon: '🎒' },
+        { id: '3', type: 'button', label: "Ouvrir l'inventaire", icon: '🎒' },
         { id: '4', type: 'input', label: 'Montant', icon: '💰', placeholder: 'Entrer un montant...', inputType: 'number', min: 0, max: 10000 },
         { id: 'sep2', type: 'separator' },
-        { id: '5', type: 'submenu', label: 'Plus d\'options', icon: '⚙️', submenuId: 'sub_options' },
+        { id: '5', type: 'submenu', label: "Plus d'options", icon: '⚙️', submenuId: 'sub_options' },
         { id: '6', type: 'button', label: 'Action dangereuse', icon: '⚠️', color: 'danger', description: 'Irréversible' },
         { id: '7', type: 'button', label: 'Action désactivée', disabled: true },
       ],
@@ -51,6 +49,11 @@ w.__kMenu = {
 
   close() {
     dispatch({ action: 'closeMenu' })
+  },
+
+  // FIX: helper pour tester le goBack
+  goBack() {
+    dispatch({ action: 'goBack' })
   },
 }
 

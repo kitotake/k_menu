@@ -7,7 +7,6 @@ export async function sendNUICallback(event: string, data: unknown = {}) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   })
-
   try {
     return await resp.json()
   } catch {
@@ -19,15 +18,14 @@ export async function sendNUICallback(event: string, data: unknown = {}) {
  * Get resource name (FiveM env) or fallback
  */
 export function getResourceName(): string {
-  // In FiveM the resource name is available via window.GetParentResourceName
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const win = window as any
   if (win.GetParentResourceName) return win.GetParentResourceName()
-  return 'k_menu' // dev fallback
+  return 'k_menu'
 }
 
 /**
- * Register a NUI message listener
+ * Register a NUI message listener for a specific action
  */
 export function onNUIMessage<T = unknown>(
   action: string,

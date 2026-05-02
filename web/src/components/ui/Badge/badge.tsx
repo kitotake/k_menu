@@ -1,4 +1,4 @@
-// Badge.tsx
+// FIX: renommé de badge.tsx → Badge.tsx pour cohérence avec les imports
 import type { ReactNode } from 'react'
 
 export type BadgeVariant = 'default' | 'accent' | 'success' | 'danger' | 'warning' | 'ghost'

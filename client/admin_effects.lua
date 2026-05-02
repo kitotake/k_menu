@@ -24,7 +24,6 @@ RegisterNetEvent('k_menu:adminInvisible', function()
     TriggerEvent('kt_lib:notify', { title = 'Admin', description = invisible and "Invisible ON" or "Invisible OFF", type = 'info' })
 end)
 
-
 -- ============================================================
 -- 🔹 HEAL / REVIVE
 -- ============================================================
@@ -35,8 +34,7 @@ RegisterNetEvent('k_menu:adminHeal', function()
 end)
 
 RegisterNetEvent('k_menu:adminHealTarget', function()
-    -- Côté admin : tp vers la cible et la soigne
-    -- À implémenter avec ton système joueur ciblé
+    -- Implémenter avec ton système de joueur ciblé
 end)
 
 RegisterNetEvent('k_menu:adminReviveTarget', function()
@@ -56,19 +54,16 @@ end)
 RegisterNetEvent('k_menu:adminTpTo', function(x, y, z)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-
     if DoesEntityExist(veh) then
         SetEntityCoords(veh, x, y, z, false, false, false, true)
     else
         SetEntityCoords(ped, x, y, z, false, false, false, true)
     end
-
     TriggerEvent('kt_lib:notify', { title = 'Téléportation', description = 'Téléporté !', type = 'success' })
 end)
 
 RegisterNetEvent('k_menu:adminTpToPlayer', function()
     -- TP vers le joueur dont l'ID est dans adminInputs["p4"]
-    -- À adapter selon ton système
 end)
 
 RegisterNetEvent('k_menu:adminBringPlayer', function()
@@ -93,9 +88,17 @@ end)
 -- ============================================================
 -- 🔹 VÉHICULES
 -- ============================================================
-RegisterNetEvent('k_menu:adminSpawnVehicle', function()
-    -- Le modèle est dans adminInputs["v1"] côté admin
-    -- À récupérer via le callback ou un event dédié
+RegisterNetEvent('k_menu:adminSpawnVehicle', function(model)
+    -- FIX: le modèle est maintenant passé directement depuis le server event
+    local modelName = model or "adder"
+    local hash = GetHashKey(modelName)
+    RequestModel(hash)
+    while not HasModelLoaded(hash) do Citizen.Wait(10) end
+    local coords = GetEntityCoords(PlayerPedId())
+    local veh = CreateVehicle(hash, coords.x + 3.0, coords.y, coords.z, GetEntityHeading(PlayerPedId()), true, false)
+    SetPedIntoVehicle(PlayerPedId(), veh, -1)
+    SetModelAsNoLongerNeeded(hash)
+    TriggerEvent('kt_lib:notify', { title = 'Véhicule', description = modelName .. " spawné.", type = 'success' })
 end)
 
 RegisterNetEvent('k_menu:adminSpawnCategory', function(category)
@@ -107,23 +110,16 @@ RegisterNetEvent('k_menu:adminSpawnCategory', function(category)
         plane = { "lazer", "hydra", "besra", "cuban800", "velum" },
         boat  = { "yacht", "dinghy", "jetmax", "speeder2", "squalo" },
     }
-
     local list = models[category]
     if not list then return end
-
-    -- Ouvre un menu de sélection
-    -- Pour l'instant, spawn le premier de la liste
     local model = list[1]
-    local hash  = GetHashKey(model)
-
+    local hash = GetHashKey(model)
     RequestModel(hash)
     while not HasModelLoaded(hash) do Citizen.Wait(10) end
-
     local coords = GetEntityCoords(PlayerPedId())
-    local veh    = CreateVehicle(hash, coords.x + 3.0, coords.y, coords.z, GetEntityHeading(PlayerPedId()), true, false)
+    local veh = CreateVehicle(hash, coords.x + 3.0, coords.y, coords.z, GetEntityHeading(PlayerPedId()), true, false)
     SetPedIntoVehicle(PlayerPedId(), veh, -1)
     SetModelAsNoLongerNeeded(hash)
-
     TriggerEvent('kt_lib:notify', { title = 'Véhicule', description = model .. " spawné.", type = 'success' })
 end)
 
@@ -147,8 +143,8 @@ end)
 
 RegisterNetEvent('k_menu:adminDeleteNearVehicles', function()
     local coords = GetEntityCoords(PlayerPedId())
-    local vehs   = GetGamePool('CVehicle')
-    local count  = 0
+    local vehs = GetGamePool('CVehicle')
+    local count = 0
     for _, veh in ipairs(vehs) do
         if #(GetEntityCoords(veh) - coords) < 30.0 and not IsPedInVehicle(PlayerPedId(), veh, false) then
             DeleteVehicle(veh)
@@ -173,10 +169,16 @@ end)
 
 -- ============================================================
 -- 🔹 HEURE
+-- FIX: adminApplyTime reçoit h et m du serveur (broadcast tous joueurs)
+-- adminSetTime est conservé pour compatibilité client-only
 -- ============================================================
+RegisterNetEvent('k_menu:adminApplyTime', function(h, m)
+    NetworkOverrideClockTime(h, m, 0)
+    TriggerEvent('kt_lib:notify', { title = 'Heure', description = ("Heure : %02d:%02d"):format(h, m), type = 'success' })
+end)
+
 RegisterNetEvent('k_menu:adminSetTime', function()
-    -- À lire depuis adminInputs["w8"] (h) et adminInputs["w9"] (min)
-    -- Envoyer via un event dédié
+    -- Géré maintenant via k_menu:adminApplyTime broadcast serveur
 end)
 
 RegisterNetEvent('k_menu:adminFreezeTime', function(frozen, h, m)
@@ -187,15 +189,14 @@ RegisterNetEvent('k_menu:adminFreezeTime', function(frozen, h, m)
 end)
 
 -- ============================================================
--- 🔹 SANCTIONS (kick/ban — exécutées depuis le client admin)
+-- 🔹 SANCTIONS
 -- ============================================================
 RegisterNetEvent('k_menu:adminKick', function()
-    -- Lit adminInputs["s0"] et adminInputs["s1"]
-    -- TriggerServerEvent('k_menu:adminDoKick', targetId, reason)
+    -- Géré via k_menu:adminDoKick server event
 end)
 
 RegisterNetEvent('k_menu:adminPermban', function()
-    -- TriggerServerEvent('k_menu:adminDoPermban', targetId, reason)
+    -- Géré via k_menu:adminDoPermban server event
 end)
 
 RegisterNetEvent('k_menu:adminWarn', function()

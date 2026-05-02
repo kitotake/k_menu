@@ -20,6 +20,10 @@ end
 
 local menuStack = {}
 
+-- FIX: adminInputs déclaré au niveau du module (scope fichier),
+-- accessible par TOUS les callbacks de ce fichier.
+local adminInputs = {}
+
 local function openMenu(menu)
     if not menu then return end
     isAdminMenuOpen = true
@@ -81,7 +85,6 @@ local function openAdminMenu()
     })
 end
 
--- ── Joueurs ──────────────────────────────────────────────────
 local function openPlayersMenu()
     openMenu({
         menuId   = "admin_players",
@@ -108,7 +111,6 @@ local function openPlayersMenu()
     })
 end
 
--- ── Sanctions ────────────────────────────────────────────────
 local function openSanctionsMenu()
     openMenu({
         menuId   = "admin_sanctions",
@@ -132,7 +134,6 @@ local function openSanctionsMenu()
     })
 end
 
--- ── Véhicules ────────────────────────────────────────────────
 local function openVehiclesMenu()
     openMenu({
         menuId   = "admin_vehicles",
@@ -161,7 +162,6 @@ local function openVehiclesMenu()
     })
 end
 
--- ── Téléportation ────────────────────────────────────────────
 local function openTeleportMenu()
     openMenu({
         menuId   = "admin_teleport",
@@ -190,7 +190,6 @@ local function openTeleportMenu()
     })
 end
 
--- ── Monde ─────────────────────────────────────────────────────
 local function openWorldMenu()
     openMenu({
         menuId   = "admin_world",
@@ -207,12 +206,12 @@ local function openWorldMenu()
             { id = "w7",  type = "button", label = "Tempête",     icon = "🌪️" },
 
             { id = "sep1", type = "separator", label = "Heure" },
-            { id = "w8",  type = "input",  label = "Heures (0-23)", placeholder = "12", inputType = "number", min = 0, max = 23 },
+            { id = "w8",  type = "input",  label = "Heures (0-23)",  placeholder = "12", inputType = "number", min = 0, max = 23 },
             { id = "w9",  type = "input",  label = "Minutes (0-59)", placeholder = "0",  inputType = "number", min = 0, max = 59 },
             { id = "w10", type = "button", label = "Appliquer l'heure", icon = "🕐", color = "success" },
 
             { id = "sep2", type = "separator" },
-            { id = "w11", type = "button", label = "Geler le temps", icon = "🧊" },
+            { id = "w11", type = "button", label = "Geler le temps",   icon = "🧊" },
             { id = "w12", type = "button", label = "Dégeler le temps", icon = "🔥" },
 
             { id = "sep3", type = "separator" },
@@ -229,7 +228,6 @@ RegisterCommand('admin', function()
         closeMenu()
         return
     end
-    -- Vérification de permission côté serveur
     TriggerServerEvent('k_menu:checkAdmin')
 end, false)
 
@@ -250,21 +248,22 @@ RegisterNUICallback('closeMenu', function(_, cb)
     cb({})
 end)
 
--- ── openSubmenu ────────────────────────────────────────────────
+-- FIX: ajout de la gestion du retour vers admin_main depuis un sous-menu
 RegisterNUICallback('openSubmenu', function(data, cb)
     local submenuId = data.submenuId or data.id
 
-    if submenuId == "admin_players"   then openPlayersMenu()
+    if     submenuId == "admin_players"   then openPlayersMenu()
     elseif submenuId == "admin_sanctions" then openSanctionsMenu()
     elseif submenuId == "admin_vehicles"  then openVehiclesMenu()
     elseif submenuId == "admin_teleport"  then openTeleportMenu()
     elseif submenuId == "admin_world"     then openWorldMenu()
+    -- FIX: permettre le retour vers le menu principal depuis un sous-menu
+    elseif submenuId == "admin_main"      then openAdminMenu()
     end
 
     cb({})
 end)
 
--- ── buttonClick ───────────────────────────────────────────────
 RegisterNUICallback('buttonClick', function(data, cb)
     local id = data.id
     print("^5[admin] buttonClick:", id)
@@ -291,15 +290,18 @@ RegisterNUICallback('buttonClick', function(data, cb)
     elseif id == "p99" then goBack()
 
     -- ── Sanctions ──
-    elseif id == "s2"  then TriggerServerEvent('k_menu:admin', 'kick')
+    -- FIX: passer les inputs s0 (targetId) et s1 (reason) au serveur
+    elseif id == "s2"  then
+        TriggerServerEvent('k_menu:adminDoKick',    tonumber(adminInputs["s0"]), adminInputs["s1"])
     elseif id == "s3"  then TriggerServerEvent('k_menu:admin', 'tempban')
-    elseif id == "s4"  then TriggerServerEvent('k_menu:admin', 'permban')
+    elseif id == "s4"  then
+        TriggerServerEvent('k_menu:adminDoPermban', tonumber(adminInputs["s0"]), adminInputs["s1"])
     elseif id == "s5"  then TriggerServerEvent('k_menu:admin', 'warn')
     elseif id == "s6"  then TriggerServerEvent('k_menu:admin', 'mute')
     elseif id == "s99" then goBack()
 
     -- ── Véhicules ──
-    elseif id == "v2"  then TriggerServerEvent('k_menu:admin', 'spawnVehicle')
+    elseif id == "v2"  then TriggerServerEvent('k_menu:admin', 'spawnVehicle', adminInputs["v1"])
     elseif id == "v3"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'sport')
     elseif id == "v4"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'suv')
     elseif id == "v5"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'moto')
@@ -311,15 +313,20 @@ RegisterNUICallback('buttonClick', function(data, cb)
     elseif id == "v99" then goBack()
 
     -- ── Téléportation ──
-    elseif id == "tp1"  then TriggerServerEvent('k_menu:admin', 'tpTo', -1037.7, -2738.5, 20.2)   -- LSIA
-    elseif id == "tp2"  then TriggerServerEvent('k_menu:admin', 'tpTo', 357.8,   -594.0,  28.7)   -- Pillbox
-    elseif id == "tp3"  then TriggerServerEvent('k_menu:admin', 'tpTo', -243.4,  6331.3,  32.4)   -- Paleto
-    elseif id == "tp4"  then TriggerServerEvent('k_menu:admin', 'tpTo', 1853.0,  3686.5,  34.3)   -- Sandy
-    elseif id == "tp5"  then TriggerServerEvent('k_menu:admin', 'tpTo', -2047.6, 3132.1,  32.8)   -- Zancudo
-    elseif id == "tp6"  then TriggerServerEvent('k_menu:admin', 'tpTo', 441.8,   -980.0,  30.7)   -- LSPD
-    elseif id == "tp7"  then TriggerServerEvent('k_menu:admin', 'tpTo', -75.5,   -818.6,  326.2)  -- Maze Bank
-    elseif id == "tp8"  then TriggerServerEvent('k_menu:admin', 'tpTo', -329.0,  -103.0, 35.6) -- Hippodrome
-    elseif id == "tp12" then TriggerServerEvent('k_menu:admin', 'tpToCoords')
+    elseif id == "tp1"  then TriggerServerEvent('k_menu:admin', 'tpTo', -1037.7, -2738.5, 20.2)
+    elseif id == "tp2"  then TriggerServerEvent('k_menu:admin', 'tpTo', 357.8,   -594.0,  28.7)
+    elseif id == "tp3"  then TriggerServerEvent('k_menu:admin', 'tpTo', -243.4,  6331.3,  32.4)
+    elseif id == "tp4"  then TriggerServerEvent('k_menu:admin', 'tpTo', 1853.0,  3686.5,  34.3)
+    elseif id == "tp5"  then TriggerServerEvent('k_menu:admin', 'tpTo', -2047.6, 3132.1,  32.8)
+    elseif id == "tp6"  then TriggerServerEvent('k_menu:admin', 'tpTo', 441.8,   -980.0,  30.7)
+    elseif id == "tp7"  then TriggerServerEvent('k_menu:admin', 'tpTo', -75.5,   -818.6,  326.2)
+    elseif id == "tp8"  then TriggerServerEvent('k_menu:admin', 'tpTo', -329.0,  -103.0,  35.6)
+    elseif id == "tp12" then
+        -- FIX: passer les coordonnées X, Y, Z depuis les inputs
+        local x = tonumber(adminInputs["tp9"])  or 0.0
+        local y = tonumber(adminInputs["tp10"]) or 0.0
+        local z = tonumber(adminInputs["tp11"]) or 0.0
+        TriggerServerEvent('k_menu:admin', 'tpTo', x, y, z)
     elseif id == "tp99" then goBack()
 
     -- ── Météo ──
@@ -330,7 +337,11 @@ RegisterNUICallback('buttonClick', function(data, cb)
     elseif id == "w5"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'SNOW')
     elseif id == "w6"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'FOGGY')
     elseif id == "w7"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'SMOG')
-    elseif id == "w10" then TriggerServerEvent('k_menu:admin', 'setTime')
+    elseif id == "w10" then
+        -- FIX: transmettre h et m lus depuis les inputs
+        local h = adminInputs["w8"] or "12"
+        local m = adminInputs["w9"] or "0"
+        TriggerServerEvent('k_menu:admin', 'setTime', h, m)
     elseif id == "w11" then TriggerServerEvent('k_menu:admin', 'freezeTime', true)
     elseif id == "w12" then TriggerServerEvent('k_menu:admin', 'freezeTime', false)
     elseif id == "w99" then goBack()
@@ -340,20 +351,23 @@ RegisterNUICallback('buttonClick', function(data, cb)
 end)
 
 -- ── inputChange — stocker les valeurs ─────────────────────────
-local adminInputs = {}
-
 RegisterNUICallback('inputChange', function(data, cb)
-    adminInputs[data.id] = data.value
+    if data.id then
+        adminInputs[data.id] = data.value
+    end
     cb({})
 end)
 
 RegisterNUICallback('inputConfirm', function(data, cb)
-    adminInputs[data.id] = data.value
+    if data.id then
+        adminInputs[data.id] = data.value
+    end
     cb({})
 end)
 
--- Accès aux inputs depuis les autres callbacks
--- Exemple: adminInputs["p4"] = ID du joueur ciblé
--- adminInputs["v1"] = modèle de véhicule, etc.
+-- FIX: event pour appliquer le temps reçu du serveur (broadcast à tous)
+RegisterNetEvent('k_menu:adminApplyTime', function(h, m)
+    NetworkOverrideClockTime(h, m, 0)
+end)
 
 print("^2[k_menu] Admin Client READY")

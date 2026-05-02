@@ -48,8 +48,9 @@ export interface MenuData {
   items: MenuItem[]
 }
 
+// FIX: ajout de 'goBack' comme action valide
 export interface NUIMessage {
-  action: 'openMenu' | 'closeMenu' | 'setItems' | 'updateItem'
+  action: 'openMenu' | 'closeMenu' | 'setItems' | 'updateItem' | 'goBack'
   menuId?: string
   title?: string
   subtitle?: string

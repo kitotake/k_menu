@@ -1,4 +1,4 @@
-// ── Palette — thème clair/givré ───────────────────────────────────────────────
+// ── Palette ───────────────────────────────────────────────────────────────────
 $bg-menu:        rgba(15, 16, 22, 0.92);
 $bg-header:      rgba(18, 20, 28, 0.95);
 $bg-item:        transparent;
@@ -26,7 +26,7 @@ $success-glow:   rgba(82, 217, 160, 0.18);
 $warning:        #f0c060;
 $warning-glow:   rgba(240, 192, 96, 0.18);
 
-// ── Dimensions ────────────────────────────────────────────────────────────────
+// ── Dimensions ────────────────────────────────────────────────
 $menu-width:      340px;
 $menu-max-height: 500px;
 $header-height:   64px;
@@ -34,11 +34,11 @@ $item-height:     40px;
 $border-radius:   12px;
 $item-radius:     6px;
 
-// ── Transitions ───────────────────────────────────────────────────────────────
+// ── Transitions ───────────────────────────────────────────────
 $transition-fast:   0.1s ease;
 $transition-normal: 0.18s ease;
 $transition-slow:   0.28s cubic-bezier(0.16, 1, 0.3, 1);
 
-// ── Fonts ─────────────────────────────────────────────────────────────────────
+// ── Fonts ─────────────────────────────────────────────────────
 $font-ui:    'Rajdhani', 'Segoe UI', system-ui, sans-serif;
 $font-mono:  'JetBrains Mono', 'Fira Code', monospace;
