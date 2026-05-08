@@ -8,22 +8,24 @@ import styles from './App.module.scss'
 export default function App() {
   const [menus, setMenus] = useState<MenuData[]>([])
 
+  // ── NUI message handler ────────────────────────────────────────────────────
   const handleMessage = useCallback((msg: NUIMessage) => {
     switch (msg.action) {
 
       case 'openMenu': {
         const newMenu: MenuData = {
-          id:       msg.menuId  ?? 'menu_' + Date.now(),
+          id:       msg.menuId  ?? `menu_${Date.now()}`,
           title:    msg.title   ?? 'Menu',
           subtitle: msg.subtitle,
           banner:   msg.banner,
           items:    msg.items   ?? [],
         }
-        setMenus(prev => {
-          const exists = prev.findIndex(m => m.id === newMenu.id)
-          if (exists !== -1) {
+        setMenus((prev) => {
+          // If menu already exists in stack, replace it at its position
+          const idx = prev.findIndex((m) => m.id === newMenu.id)
+          if (idx !== -1) {
             const updated = [...prev]
-            updated[exists] = newMenu
+            updated[idx] = newMenu
             return updated
           }
           return [...prev, newMenu]
@@ -32,8 +34,9 @@ export default function App() {
       }
 
       case 'setItems': {
-        setMenus(prev =>
-          prev.map(m =>
+        if (!msg.menuId) break
+        setMenus((prev) =>
+          prev.map((m) =>
             m.id === msg.menuId
               ? { ...m, items: msg.items ?? m.items }
               : m
@@ -44,8 +47,8 @@ export default function App() {
 
       case 'closeMenu': {
         if (msg.menuId) {
-          setMenus(prev => {
-            const idx = prev.findIndex(m => m.id === msg.menuId)
+          setMenus((prev) => {
+            const idx = prev.findIndex((m) => m.id === msg.menuId)
             if (idx === -1) return prev
             return prev.slice(0, idx)
           })
@@ -55,13 +58,8 @@ export default function App() {
         break
       }
 
-      // FIX: 'goBack' géré côté React sans appel NUI supplémentaire
-      // (ce cas arrive quand le Lua confirme le retour arrière)
       case 'goBack': {
-        setMenus(prev => {
-          if (prev.length <= 1) return []
-          return prev.slice(0, -1)
-        })
+        setMenus((prev) => (prev.length <= 1 ? [] : prev.slice(0, -1)))
         break
       }
 
@@ -72,26 +70,30 @@ export default function App() {
 
   useNUIMessage(handleMessage)
 
+  // ── Menu event handlers ─────────────────────────────────────────────────────
   const handleClose = useCallback((menuId: string) => {
-    setMenus(prev => {
-      const idx = prev.findIndex(m => m.id === menuId)
+    setMenus((prev) => {
+      const idx = prev.findIndex((m) => m.id === menuId)
       if (idx === -1) return prev
       return prev.slice(0, idx)
     })
   }, [])
 
-  const handleBack = useCallback((menuId: string) => {
-    setMenus(prev => {
-      const idx = prev.findIndex(m => m.id === menuId)
-      if (idx === -1) return prev
-      if (idx === 0) {
-        sendNUICallback('closeMenu', { menuId })
-        return []
-      }
-      sendNUICallback('goBack', { menuId })
-      return prev.slice(0, idx)
-    })
-  }, [])
+  const handleBack = useCallback(
+    (menuId: string) => {
+      setMenus((prev) => {
+        const idx = prev.findIndex((m) => m.id === menuId)
+        if (idx === -1) return prev
+        if (idx === 0) {
+          sendNUICallback('closeMenu', { menuId })
+          return []
+        }
+        sendNUICallback('goBack', { menuId })
+        return prev.slice(0, idx)
+      })
+    },
+    []
+  )
 
   const activeMenu = menus[menus.length - 1] ?? null
 

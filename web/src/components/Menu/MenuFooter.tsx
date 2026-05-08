@@ -9,21 +9,23 @@ export function MenuFooter({ isRoot }: MenuFooterProps) {
     <div className={styles.footer}>
       <div className={styles.hint}>
         <kbd className={styles.key}>↑↓</kbd>
-        <span>Naviguer</span>
+        <span>Nav</span>
       </div>
+      <div className={styles.divider} />
       <div className={styles.hint}>
         <kbd className={styles.key}>↵</kbd>
-        <span>Confirmer</span>
+        <span>Select</span>
       </div>
+      <div className={styles.divider} />
       {!isRoot ? (
         <div className={styles.hint}>
           <kbd className={styles.key}>⌫</kbd>
-          <span>Retour</span>
+          <span>Back</span>
         </div>
       ) : (
         <div className={styles.hint}>
-          <kbd className={styles.key}>Esc</kbd>
-          <span>Fermer</span>
+          <kbd className={styles.key}>ESC</kbd>
+          <span>Close</span>
         </div>
       )}
     </div>

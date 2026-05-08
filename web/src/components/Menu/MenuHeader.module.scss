@@ -1,106 +1,205 @@
 @use '../../styles/variables' as *;
-@use '../../styles/global';
 
+// ── Wrapper ───────────────────────────────────────────────────────────────────
 .header {
   position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $border-strong;
   flex-shrink: 0;
+  overflow: hidden;
+  z-index: 2;
 }
 
+// ── Banner image ──────────────────────────────────────────────────────────────
 .banner {
   position: relative;
-  height: 70px;
+  height: 64px;
   overflow: hidden;
+
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    opacity: 0.7;
+    opacity: 0.45;
+    filter: saturate(0.6) brightness(0.8);
+  }
+
+  // Dark gradient overlay
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba($bg-header, 0.5) 0%,
+      rgba($bg-header, 0.95) 100%
+    );
   }
 }
 
-.bannerOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba($bg-header, 0.1) 0%, rgba($bg-header, 0.95) 100%);
+// ── ID tag bar (top colored strip) ────────────────────────────────────────────
+.idBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 12px 4px;
+  background: rgba($accent, 0.06);
+  border-bottom: 1px solid rgba($accent, 0.12);
 }
 
+.idTag {
+  font-family: $font-mono;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: $accent;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.statusDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: $success;
+  box-shadow: 0 0 6px $success-glow;
+  animation: glowPulse 2s ease infinite;
+}
+
+// ── Main content ──────────────────────────────────────────────────────────────
 .content {
-  padding: 12px 14px 0;
+  padding: 8px 12px 0;
   background: $bg-header;
 }
 
 .titleRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
 
-.titleGroup { min-width: 0; flex: 1; }
+.titleGroup {
+  min-width: 0;
+  flex: 1;
+}
 
+// Back hint (breadcrumb)
 .backHint {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   margin-bottom: 3px;
-  opacity: 0.6;
 }
 
-.backArrow { font-size: 11px; color: $accent; }
+.backArrow {
+  font-size: 10px;
+  color: $accent;
+  font-family: $font-mono;
+  opacity: 0.8;
+}
+
 .backLabel {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   color: $text-muted;
 }
 
+// Title
 .title {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: $text-primary;
-  line-height: 1.15;
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-family: $font-display;
 }
 
 .subtitle {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 400;
+  font-family: $font-mono;
   color: $text-muted;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+// ── Counter widget ────────────────────────────────────────────────────────────
 .counter {
   display: flex;
-  align-items: center;
-  gap: 1px;
-  font-family: $font-mono;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid $border-color;
-  border-radius: 6px;
-  padding: 3px 7px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
   flex-shrink: 0;
 }
 
-.counterCurrent { font-size: 12px; font-weight: 600; color: $accent-light; }
-.counterSep     { font-size: 10px; color: $text-muted; margin: 0 1px; }
-.counterTotal   { font-size: 11px; color: $text-secondary; }
+.counterLabel {
+  font-family: $font-mono;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: $text-muted;
+  text-transform: uppercase;
+}
 
+.counterValue {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  font-family: $font-mono;
+}
+
+.counterCurrent {
+  font-size: 15px;
+  font-weight: 400;
+  color: $accent-light;
+  line-height: 1;
+}
+
+.counterSep {
+  font-size: 10px;
+  color: $text-muted;
+  margin: 0 2px;
+}
+
+.counterTotal {
+  font-size: 11px;
+  color: $text-secondary;
+}
+
+// ── Bottom accent line ────────────────────────────────────────────────────────
 .accentLine {
   height: 1px;
-  background: linear-gradient(to right, $accent 0%, rgba($accent, 0.2) 50%, transparent 100%);
-  margin: 0 -14px;
-  opacity: 0.6;
+  margin: 0 -12px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba($accent, 0.5) 20%,
+    rgba($accent, 0.8) 50%,
+    rgba($accent, 0.5) 80%,
+    transparent 100%
+  );
+  position: relative;
+
+  // Center dot
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: $accent;
+    box-shadow: 0 0 6px $accent;
+  }
 }

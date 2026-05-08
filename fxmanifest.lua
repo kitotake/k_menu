@@ -5,7 +5,7 @@ lua54 'yes'
 name 'k_menu'
 author 'Kitotake'
 description 'Librairie de menu pour FiveM'
-version '2.0'
+version '2.1'
 
 ui_page 'web/dist/index.html'
 
@@ -15,12 +15,12 @@ files {
 
 client_scripts {
     'client/main.lua',
-    'client/admin.lua',       -- menu + navigation
-    'client/admin_effects.lua', -- effets locaux
+    'client/admin.lua',
+    'client/admin_effects.lua',
     'client/noclip.lua'
 }
 
 server_scripts {
     'server/main.lua',
-    'server/admin.lua'        -- vérif perms + dispatch
+    'server/admin.lua'
 }

@@ -1,5 +1,5 @@
 @use 'variables' as *;
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -22,12 +22,13 @@ body {
   user-select: none;
 }
 
-::-webkit-scrollbar { width: 4px; }
+// ── Scrollbar ─────────────────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px;
-  &:hover { background: rgba(255,255,255,0.2); }
+  background: rgba($accent, 0.2);
+  border-radius: 0;
+  &:hover { background: rgba($accent, 0.4); }
 }
 
 :focus-visible {
@@ -35,14 +36,35 @@ body {
   outline-offset: 2px;
 }
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+// ── Keyframes ─────────────────────────────────────────────────────────────────
+@keyframes menuOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scaleY(0.96);
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    clip-path: inset(0 0 0% 0);
+  }
 }
 
-@keyframes slideOut {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(8px) scale(0.97); }
+@keyframes scanLine {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.4; }
+  90%  { opacity: 0.4; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+
+@keyframes blinkCursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 4px $accent-glow; }
+  50%       { box-shadow: 0 0 12px $accent-glow, 0 0 24px rgba($accent, 0.1); }
 }
 
 @keyframes fadeIn {
@@ -50,12 +72,19 @@ body {
   to   { opacity: 1; }
 }
 
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes cornerFlash {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position:  200% center; }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
 }

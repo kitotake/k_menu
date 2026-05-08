@@ -1,4 +1,5 @@
-export type MenuItemType = 'button' | 'input' | 'title' | 'separator' | 'submenu'
+// ── Item Types ────────────────────────────────────────────────────────────────
+export type MenuItemType = 'button' | 'input' | 'title' | 'separator' | 'submenu' | 'toggle' | 'slider'
 
 export interface BaseMenuItem {
   id: string
@@ -25,6 +26,20 @@ export interface InputItem extends BaseMenuItem {
   max?: number
 }
 
+export interface ToggleItem extends BaseMenuItem {
+  type: 'toggle'
+  value?: boolean
+  color?: 'default' | 'danger' | 'success' | 'warning'
+}
+
+export interface SliderItem extends BaseMenuItem {
+  type: 'slider'
+  value?: number
+  min?: number
+  max?: number
+  step?: number
+}
+
 export interface TitleItem extends BaseMenuItem {
   type: 'title'
 }
@@ -38,7 +53,14 @@ export interface SubMenuItem extends BaseMenuItem {
   submenuId: string
 }
 
-export type MenuItem = ButtonItem | InputItem | TitleItem | SeparatorItem | SubMenuItem
+export type MenuItem =
+  | ButtonItem
+  | InputItem
+  | ToggleItem
+  | SliderItem
+  | TitleItem
+  | SeparatorItem
+  | SubMenuItem
 
 export interface MenuData {
   id: string
@@ -48,7 +70,6 @@ export interface MenuData {
   items: MenuItem[]
 }
 
-// FIX: ajout de 'goBack' comme action valide
 export interface NUIMessage {
   action: 'openMenu' | 'closeMenu' | 'setItems' | 'updateItem' | 'goBack'
   menuId?: string

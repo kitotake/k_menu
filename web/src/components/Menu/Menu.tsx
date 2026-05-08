@@ -14,10 +14,15 @@ interface MenuProps {
   isRoot: boolean
 }
 
+/** Returns indices of items that can be navigated to */
 function getNavigableIndices(items: MenuItem[]): number[] {
   return items
     .map((item, i) => ({ item, i }))
-    .filter(({ item }) => item.type !== 'separator' && item.type !== 'title' && !item.disabled)
+    .filter(({ item }) =>
+      item.type !== 'separator' &&
+      item.type !== 'title' &&
+      !item.disabled
+    )
     .map(({ i }) => i)
 }
 
@@ -25,27 +30,45 @@ export function Menu({ menu, onClose, onBack, isRoot }: MenuProps) {
   const navigable = getNavigableIndices(menu.items)
   const [navIndex, setNavIndex] = useState(0)
 
-  const selectedItemIndex = navigable[navIndex] ?? -1
-
+  // Reset selection when menu changes
   useEffect(() => {
     setNavIndex(0)
   }, [menu.id])
 
+  const selectedItemIndex = navigable[navIndex] ?? -1
+
+  // ── Navigation ───────────────────────────────────────────────────────────────
   const moveUp = useCallback(() => {
-    setNavIndex(i => Math.max(0, i - 1))
+    setNavIndex((i) => Math.max(0, i - 1))
   }, [])
 
   const moveDown = useCallback(() => {
-    setNavIndex(i => Math.min(navigable.length - 1, i + 1))
+    setNavIndex((i) => Math.min(navigable.length - 1, i + 1))
   }, [navigable.length])
 
-  const activate = useCallback((item: MenuItem) => {
-    if (item.type === 'button') {
-      sendNUICallback('buttonClick', { menuId: menu.id, id: item.id })
-    } else if (item.type === 'submenu') {
-      sendNUICallback('openSubmenu', { menuId: menu.id, submenuId: item.submenuId, id: item.id })
-    }
-  }, [menu.id])
+  // ── Activation ───────────────────────────────────────────────────────────────
+  const activate = useCallback(
+    (item: MenuItem) => {
+      switch (item.type) {
+        case 'button':
+          sendNUICallback('buttonClick', { menuId: menu.id, id: item.id })
+          break
+        case 'submenu':
+          sendNUICallback('openSubmenu', {
+            menuId: menu.id,
+            submenuId: item.submenuId,
+            id: item.id,
+          })
+          break
+        case 'toggle':
+          // handled inside MenuItem itself
+          break
+        default:
+          break
+      }
+    },
+    [menu.id]
+  )
 
   const handleEnter = useCallback(() => {
     const item = menu.items[selectedItemIndex]
@@ -63,16 +86,23 @@ export function Menu({ menu, onClose, onBack, isRoot }: MenuProps) {
     onBack()
   }, [onBack])
 
-  useKeyPress('ArrowUp',   moveUp)
+  // ── Key bindings ─────────────────────────────────────────────────────────────
+  useKeyPress('ArrowUp', moveUp)
   useKeyPress('ArrowDown', moveDown)
-  useKeyPress('Enter',     handleEnter)
-  useKeyPress('Escape',    handleEscape)
+  useKeyPress('Enter', handleEnter)
+  useKeyPress('Escape', handleEscape)
   useKeyPress('Backspace', handleBack)
 
   const navigableSelected = navigable.indexOf(selectedItemIndex)
 
   return (
     <div className={styles.menu} role="listbox" aria-label={menu.title}>
+      {/* Corner decorations */}
+      <div className={styles.cornerTL} />
+      <div className={styles.cornerBR} />
+      <div className={styles.cornerTR} />
+      <div className={styles.cornerBL} />
+
       <MenuHeader
         title={menu.title}
         subtitle={menu.subtitle}

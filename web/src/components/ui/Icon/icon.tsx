@@ -1,4 +1,3 @@
-// FIX: renommé de icon.tsx → Icon.tsx
 export interface IconProps {
   name: string
   size?: number
