@@ -1,23 +1,102 @@
-# 🚀 k_Menu - Librairie de Menu pour FiveM
+# k_menu v3
 
-Bienvenue dans **k_Menu**, une librairie de menu NUI pour **FiveM**, utilisant **React, TypeScript et Lua**.  
-Ce projet permet aux développeurs de **créer facilement des menus interactifs** et de les intégrer à leurs scripts FiveM.
+Menu NUI minimaliste pour FiveM — React + TypeScript + Lua.
 
----
+## Installation
 
-## 📌 Fonctionnalités
-✅ Création de menus dynamiques avec **React + TypeScript**  
-✅ Interaction fluide entre **NUI (JS/TS) et Lua**  
-✅ **Support de ESX et ox_inventory**  
-✅ **Gestion des touches**, notamment **Échap** pour fermer le menu  
-✅ **Personnalisation avancée** via `styles.css`  
-
----
-
-## 📥 Installation
-
-### 🔹 **1. Télécharger le projet**
-Clone le dépôt sur ton serveur :
 ```sh
-git clone https://github.com/kitotake/k_Menu.git
-cd k_Menu
+cd web
+npm install
+npm run build
+```
+
+Copier le dossier `k_menu_v2` dans `resources/` et ajouter dans `server.cfg` :
+```
+ensure k_menu
+```
+
+## Configuration
+
+Éditer `shared/config.lua` :
+- `Config.Admins` — liste des IDs admins (license ou steam)
+- `Config.MenuKey` / `Config.AdminKey` — touches d'ouverture
+- `Config.Debug` — logs de debug
+
+## Utilisation
+
+### Ouvrir un menu depuis Lua (client)
+
+```lua
+K.open({
+    id       = "mon_menu",
+    title    = "MON MENU",
+    subtitle = "description",
+    items    = {
+        { id = "sep1", type = "separator", label = "Section" },
+        { id = "b1",   type = "button",    label = "Bouton",   color = "success" },
+        { id = "i1",   type = "input",     label = "Valeur",   placeholder = "0", inputType = "number" },
+        { id = "t1",   type = "toggle",    label = "Option",   value = false },
+        { id = "sub1", type = "submenu",   label = "Sous-menu", submenuId = "mon_sous_menu" },
+    }
+})
+```
+
+### Lire la valeur d'un input
+
+```lua
+local val = K.input("i1")  -- retourne la valeur saisie
+```
+
+### Fermer
+
+```lua
+K.close()
+```
+
+### Écouter les clics
+
+```lua
+RegisterNetEvent('k_menu:button', function(id, menuId)
+    if id == "b1" then
+        -- action
+    end
+end)
+```
+
+### Écouter les toggles
+
+```lua
+RegisterNetEvent('k_menu:toggle', function(id, value, menuId)
+    if id == "t1" then
+        -- value = true/false
+    end
+end)
+```
+
+### Naviguer vers un sous-menu
+
+```lua
+RegisterNetEvent('k_menu:submenu', function(submenuId, menuId)
+    if submenuId == "mon_sous_menu" then
+        K.open({ id = "mon_sous_menu", title = "SOUS-MENU", items = {} })
+    end
+end)
+```
+
+## Types d'items
+
+| type        | champs spécifiques                                   |
+|-------------|------------------------------------------------------|
+| `button`    | `color` (danger/success/warning), `rightLabel`       |
+| `input`     | `placeholder`, `inputType`, `min`, `max`, `value`    |
+| `toggle`    | `value` (bool)                                       |
+| `separator` | `label` (optionnel)                                  |
+| `submenu`   | `submenuId`                                          |
+
+## Dev
+
+```sh
+cd web && npm run dev
+```
+
+Dans la console : `dev.open()` / `dev.close()`

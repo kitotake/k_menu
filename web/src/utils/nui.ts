@@ -1,70 +1,37 @@
-/**
- * NUI bridge utilities — FiveM ↔ React communication
- */
+// utils/nui.ts
 
-const IS_DEV = !window.hasOwnProperty('GetParentResourceName') ||
-  (window as unknown as Record<string, unknown>).GetParentResourceName === undefined
+const DEV = typeof (window as any).GetParentResourceName !== 'function'
 
-/**
- * Get the FiveM resource name (fallback for dev)
- */
-export function getResourceName(): string {
-  const win = window as unknown as Record<string, (() => string) | undefined>
-  if (typeof win.GetParentResourceName === 'function') {
-    return win.GetParentResourceName()
-  }
-  return 'k_menu'
+function getResource(): string {
+  const w = window as any
+  return typeof w.GetParentResourceName === 'function'
+    ? w.GetParentResourceName()
+    : 'k_menu'
 }
 
-/**
- * Send a NUI callback to Lua
- * Returns parsed JSON or null on failure
- */
-export async function sendNUICallback<T = unknown>(
+export async function nuiCallback<T = unknown>(
   event: string,
   data: unknown = {}
 ): Promise<T | null> {
-  if (IS_DEV) {
-    console.info(`[NUI→Lua] ${event}`, data)
+  if (DEV) {
+    console.info(`[nui→lua] ${event}`, data)
     return null
   }
   try {
-    const resp = await fetch(`https://${getResourceName()}/${event}`, {
-      method: 'POST',
+    const res = await fetch(`https://${getResource()}/${event}`, {
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body:    JSON.stringify(data),
     })
-    if (!resp.ok) return null
-    return await resp.json() as T
-  } catch (err) {
-    console.warn(`[NUI] sendNUICallback failed for "${event}":`, err)
+    if (!res.ok) return null
+    return res.json() as Promise<T>
+  } catch {
     return null
   }
 }
 
-/**
- * Register a listener for a specific NUI action
- * Returns a cleanup function
- */
-export function onNUIMessage<T = unknown>(
-  action: string,
-  callback: (data: T) => void
-): () => void {
-  const handler = (event: MessageEvent) => {
-    const data = event.data as { action?: string } & T
-    if (data?.action === action) callback(data)
-  }
-  window.addEventListener('message', handler)
-  return () => window.removeEventListener('message', handler)
-}
-
-/**
- * Listen to ALL NUI messages — returns cleanup function
- */
-export function onAnyNUIMessage<T = unknown>(
-  callback: (data: T) => void
-): () => void {
-  const handler = (event: MessageEvent) => callback(event.data as T)
+export function onMessage<T = unknown>(cb: (data: T) => void): () => void {
+  const handler = (e: MessageEvent) => cb(e.data as T)
   window.addEventListener('message', handler)
   return () => window.removeEventListener('message', handler)
 }

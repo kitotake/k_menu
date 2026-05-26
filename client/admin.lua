@@ -1,373 +1,242 @@
 -- client/admin.lua
--- Menu Admin pour k_Menu
+-- Menu Admin — utilise K (core.lua)
 
-local isAdminMenuOpen = false
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Menus
+-- ─────────────────────────────────────────────────────────────────────────────
 
--- ============================================================
--- 🔹 HELPERS
--- ============================================================
-local function sendMenu(menu)
-    SendNUIMessage({
-        action   = "openMenu",
-        menuId   = menu.menuId or menu.id,
-        title    = menu.title,
-        subtitle = menu.subtitle,
-        banner   = menu.banner,
-        items    = menu.items,
-        visible  = true
+local function menuPrincipal()
+    K.open({
+        id       = "admin",
+        title    = "ADMIN",
+        subtitle = "Panel de gestion",
+        items    = {
+            { id = "sep_joueurs",   type = "separator", label = "Joueurs" },
+            { id = "nav_joueurs",   type = "submenu",   label = "Joueurs",         icon = "users",         submenuId = "admin_joueurs" },
+            { id = "nav_sanctions", type = "submenu",   label = "Sanctions",       icon = "shield",        submenuId = "admin_sanctions" },
+
+            { id = "sep_veh",       type = "separator", label = "Véhicules" },
+            { id = "nav_veh",       type = "submenu",   label = "Véhicules",       icon = "car",           submenuId = "admin_veh" },
+            { id = "del_veh_near",  type = "button",    label = "Suppr. véhicules proches", icon = "trash", color = "danger" },
+
+            { id = "sep_monde",     type = "separator", label = "Monde" },
+            { id = "nav_meteo",     type = "submenu",   label = "Météo / Heure",   icon = "cloud",         submenuId = "admin_monde" },
+            { id = "nav_tp",        type = "submenu",   label = "Téléportation",   icon = "map-pin",       submenuId = "admin_tp" },
+
+            { id = "sep_outils",    type = "separator", label = "Outils" },
+            { id = "godmode",       type = "toggle",    label = "God Mode",        icon = "shield",        value = false },
+            { id = "invisible",     type = "toggle",    label = "Invisible",       icon = "eye-off",       value = false },
+            { id = "noclip",        type = "button",    label = "NoClip",          icon = "move" },
+            { id = "speedboost",    type = "toggle",    label = "Speed Boost",     icon = "zap",           value = false },
+        }
     })
 end
 
-local menuStack = {}
+local function menuJoueurs()
+    K.open({
+        id    = "admin_joueurs",
+        title = "JOUEURS",
+        items = {
+            { id = "sep_global", type = "separator", label = "Global" },
+            { id = "list_all",   type = "button",    label = "Lister tous",       icon = "list" },
+            { id = "heal_all",   type = "button",    label = "Heal tous",         icon = "heart",     color = "success" },
+            { id = "freeze_all", type = "button",    label = "Freeze tous",       icon = "snowflake", color = "danger" },
 
--- FIX: adminInputs déclaré au niveau du module (scope fichier),
--- accessible par TOUS les callbacks de ce fichier.
-local adminInputs = {}
-
-local function openMenu(menu)
-    if not menu then return end
-    isAdminMenuOpen = true
-    table.insert(menuStack, menu)
-    sendMenu(menu)
-    SetNuiFocus(true, true)
+            { id = "sep_cible",  type = "separator", label = "Cible" },
+            { id = "target_id",  type = "input",     label = "ID joueur",         placeholder = "1", inputType = "number" },
+            { id = "tp_to",      type = "button",    label = "TP vers joueur",    icon = "navigation" },
+            { id = "bring",      type = "button",    label = "Ramener",           icon = "anchor" },
+            { id = "heal_p",     type = "button",    label = "Heal joueur",       icon = "heart",     color = "success" },
+            { id = "revive_p",   type = "button",    label = "Revive joueur",     icon = "activity",  color = "success" },
+            { id = "spectate",   type = "button",    label = "Spectate",          icon = "eye" },
+        }
+    })
 end
 
-local function closeMenu()
-    isAdminMenuOpen = false
-    menuStack = {}
-    SendNUIMessage({ action = "closeMenu", visible = false })
-    SetNuiFocus(false, false)
+local function menuSanctions()
+    K.open({
+        id    = "admin_sanctions",
+        title = "SANCTIONS",
+        items = {
+            { id = "sanc_id",    type = "input",  label = "ID joueur",  placeholder = "1",                inputType = "number" },
+            { id = "sanc_raison",type = "input",  label = "Raison",     placeholder = "Motif..." },
+            { id = "sep_acts",   type = "separator", label = "Actions" },
+            { id = "kick",       type = "button", label = "Kick",       icon = "log-out",   color = "danger" },
+            { id = "ban_temp",   type = "button", label = "Ban temp.",  icon = "clock",     color = "danger" },
+            { id = "ban_perm",   type = "button", label = "Ban perm.",  icon = "slash",     color = "danger" },
+            { id = "warn",       type = "button", label = "Warn",       icon = "alert-triangle", color = "warning" },
+        }
+    })
 end
 
-local function goBack()
-    if #menuStack <= 1 then
-        closeMenu()
-        return
+local function menuVehicules()
+    K.open({
+        id    = "admin_veh",
+        title = "VÉHICULES",
+        items = {
+            { id = "veh_model",  type = "input",  label = "Modèle",       placeholder = "adder" },
+            { id = "spawn_veh",  type = "button", label = "Spawner",      icon = "plus-circle", color = "success" },
+            { id = "sep_cats",   type = "separator", label = "Catégories rapides" },
+            { id = "cat_sport",  type = "button", label = "Sport",        icon = "zap" },
+            { id = "cat_suv",    type = "button", label = "SUV",          icon = "truck" },
+            { id = "cat_moto",   type = "button", label = "Moto",         icon = "wind" },
+            { id = "cat_heli",   type = "button", label = "Hélico",       icon = "anchor" },
+            { id = "cat_avion",  type = "button", label = "Avion",        icon = "navigation" },
+            { id = "sep_mon",    type = "separator", label = "Mon véhicule" },
+            { id = "fix_veh",    type = "button", label = "Réparer",      icon = "tool" },
+            { id = "del_veh",    type = "button", label = "Supprimer",    icon = "trash",  color = "danger" },
+        }
+    })
+end
+
+local function menuMonde()
+    K.open({
+        id    = "admin_monde",
+        title = "MONDE",
+        items = {
+            { id = "sep_meteo",  type = "separator", label = "Météo" },
+            { id = "w_sun",      type = "button", label = "Ensoleillé",   icon = "sun" },
+            { id = "w_cloud",    type = "button", label = "Nuageux",      icon = "cloud" },
+            { id = "w_rain",     type = "button", label = "Pluie",        icon = "cloud-rain" },
+            { id = "w_thunder",  type = "button", label = "Orage",        icon = "cloud-lightning" },
+            { id = "w_snow",     type = "button", label = "Neige",        icon = "cloud-snow" },
+            { id = "w_fog",      type = "button", label = "Brouillard",   icon = "wind" },
+            { id = "sep_time",   type = "separator", label = "Heure" },
+            { id = "time_h",     type = "input",  label = "Heures (0-23)",  placeholder = "12", inputType = "number", min = 0, max = 23 },
+            { id = "time_m",     type = "input",  label = "Minutes (0-59)", placeholder = "0",  inputType = "number", min = 0, max = 59 },
+            { id = "set_time",   type = "button", label = "Appliquer",    icon = "clock", color = "success" },
+            { id = "sep_freeze", type = "separator" },
+            { id = "freeze_t",   type = "toggle", label = "Geler le temps", value = false },
+        }
+    })
+end
+
+local function menuTeleport()
+    K.open({
+        id    = "admin_tp",
+        title = "TÉLÉPORTATION",
+        items = {
+            { id = "sep_lieux",  type = "separator", label = "Lieux" },
+            { id = "tp_lsia",    type = "button", label = "LSIA (Aéroport)" },
+            { id = "tp_pillbox", type = "button", label = "Pillbox Hill" },
+            { id = "tp_paleto",  type = "button", label = "Paleto Bay" },
+            { id = "tp_sandy",   type = "button", label = "Sandy Shores" },
+            { id = "tp_zancudo", type = "button", label = "Fort Zancudo" },
+            { id = "tp_lspd",    type = "button", label = "Commissariat LSPD" },
+            { id = "sep_coords", type = "separator", label = "Coordonnées" },
+            { id = "tp_x",       type = "input",  label = "X", placeholder = "0.0", inputType = "number" },
+            { id = "tp_y",       type = "input",  label = "Y", placeholder = "0.0", inputType = "number" },
+            { id = "tp_z",       type = "input",  label = "Z", placeholder = "0.0", inputType = "number" },
+            { id = "tp_go",      type = "button", label = "Téléporter",    icon = "map-pin", color = "success" },
+        }
+    })
+end
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Navigation sous-menus
+-- ─────────────────────────────────────────────────────────────────────────────
+
+local submenus = {
+    admin_joueurs  = menuJoueurs,
+    admin_sanctions= menuSanctions,
+    admin_veh      = menuVehicules,
+    admin_monde    = menuMonde,
+    admin_tp       = menuTeleport,
+    admin           = menuPrincipal,
+}
+
+RegisterNetEvent('k_menu:submenu', function(submenuId, _)
+    local fn = submenus[submenuId]
+    if fn then fn() end
+end)
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Actions boutons
+-- ─────────────────────────────────────────────────────────────────────────────
+
+RegisterNetEvent('k_menu:button', function(id, _menuId)
+    -- Véhicules
+    if id == "del_veh_near" then TriggerServerEvent('k_menu:admin', 'deleteNear')
+    elseif id == "fix_veh"  then TriggerServerEvent('k_menu:admin', 'fixVeh')
+    elseif id == "del_veh"  then TriggerServerEvent('k_menu:admin', 'delVeh')
+    elseif id == "spawn_veh"then TriggerServerEvent('k_menu:admin', 'spawnVeh', K.input("veh_model"))
+    elseif id == "cat_sport"then TriggerServerEvent('k_menu:admin', 'spawnCat', 'sport')
+    elseif id == "cat_suv"  then TriggerServerEvent('k_menu:admin', 'spawnCat', 'suv')
+    elseif id == "cat_moto" then TriggerServerEvent('k_menu:admin', 'spawnCat', 'moto')
+    elseif id == "cat_heli" then TriggerServerEvent('k_menu:admin', 'spawnCat', 'heli')
+    elseif id == "cat_avion"then TriggerServerEvent('k_menu:admin', 'spawnCat', 'plane')
+
+    -- Joueurs
+    elseif id == "list_all"  then TriggerServerEvent('k_menu:admin', 'listPlayers')
+    elseif id == "heal_all"  then TriggerServerEvent('k_menu:admin', 'healAll')
+    elseif id == "freeze_all"then TriggerServerEvent('k_menu:admin', 'freezeAll')
+    elseif id == "tp_to"     then TriggerServerEvent('k_menu:admin', 'tpToPlayer',  tonumber(K.input("target_id")))
+    elseif id == "bring"     then TriggerServerEvent('k_menu:admin', 'bring',        tonumber(K.input("target_id")))
+    elseif id == "heal_p"    then TriggerServerEvent('k_menu:admin', 'healPlayer',   tonumber(K.input("target_id")))
+    elseif id == "revive_p"  then TriggerServerEvent('k_menu:admin', 'revivePlayer', tonumber(K.input("target_id")))
+    elseif id == "spectate"  then TriggerServerEvent('k_menu:admin', 'spectate',     tonumber(K.input("target_id")))
+
+    -- Sanctions
+    elseif id == "kick"      then TriggerServerEvent('k_menu:adminKick',    tonumber(K.input("sanc_id")), K.input("sanc_raison"))
+    elseif id == "ban_temp"  then TriggerServerEvent('k_menu:adminBanTemp', tonumber(K.input("sanc_id")), K.input("sanc_raison"))
+    elseif id == "ban_perm"  then TriggerServerEvent('k_menu:adminBanPerm', tonumber(K.input("sanc_id")), K.input("sanc_raison"))
+    elseif id == "warn"      then TriggerServerEvent('k_menu:admin', 'warn', tonumber(K.input("sanc_id")), K.input("sanc_raison"))
+
+    -- Téléportation prédéfinie
+    elseif id == "tp_lsia"   then TriggerServerEvent('k_menu:admin', 'tpTo', -1037.7, -2738.5, 20.2)
+    elseif id == "tp_pillbox"then TriggerServerEvent('k_menu:admin', 'tpTo', 357.8,   -594.0,  28.7)
+    elseif id == "tp_paleto" then TriggerServerEvent('k_menu:admin', 'tpTo', -243.4,  6331.3,  32.4)
+    elseif id == "tp_sandy"  then TriggerServerEvent('k_menu:admin', 'tpTo', 1853.0,  3686.5,  34.3)
+    elseif id == "tp_zancudo"then TriggerServerEvent('k_menu:admin', 'tpTo', -2047.6, 3132.1,  32.8)
+    elseif id == "tp_lspd"   then TriggerServerEvent('k_menu:admin', 'tpTo', 441.8,   -980.0,  30.7)
+    elseif id == "tp_go"     then
+        local x = tonumber(K.input("tp_x")) or 0.0
+        local y = tonumber(K.input("tp_y")) or 0.0
+        local z = tonumber(K.input("tp_z")) or 0.0
+        TriggerServerEvent('k_menu:admin', 'tpTo', x, y, z)
+
+    -- Météo
+    elseif id == "w_sun"     then TriggerServerEvent('k_menu:admin', 'weather', 'EXTRASUNNY')
+    elseif id == "w_cloud"   then TriggerServerEvent('k_menu:admin', 'weather', 'CLOUDS')
+    elseif id == "w_rain"    then TriggerServerEvent('k_menu:admin', 'weather', 'RAIN')
+    elseif id == "w_thunder" then TriggerServerEvent('k_menu:admin', 'weather', 'THUNDER')
+    elseif id == "w_snow"    then TriggerServerEvent('k_menu:admin', 'weather', 'SNOW')
+    elseif id == "w_fog"     then TriggerServerEvent('k_menu:admin', 'weather', 'FOGGY')
+    elseif id == "set_time"  then
+        TriggerServerEvent('k_menu:admin', 'setTime',
+            tonumber(K.input("time_h")) or 12,
+            tonumber(K.input("time_m")) or 0)
+
+    -- Noclip
+    elseif id == "noclip"    then TriggerServerEvent('k_menu:admin', 'noclip')
     end
-    table.remove(menuStack)
-    sendMenu(menuStack[#menuStack])
-end
+end)
 
--- ============================================================
--- 🔹 MENUS
--- ============================================================
+-- Toggles admin
+RegisterNetEvent('k_menu:toggle', function(id, value, _)
+    if id == "godmode"    then TriggerServerEvent('k_menu:admin', 'godMode',    value)
+    elseif id == "invisible"  then TriggerServerEvent('k_menu:admin', 'invisible',  value)
+    elseif id == "speedboost" then TriggerServerEvent('k_menu:admin', 'speedBoost', value)
+    elseif id == "freeze_t"   then TriggerServerEvent('k_menu:admin', 'freezeTime', value)
+    end
+end)
 
-local function openAdminMenu()
-    openMenu({
-        menuId   = "admin_main",
-        title    = "ADMIN PANEL",
-        subtitle = "Gestion du serveur",
-        items    = {
-            { id = "t1",  type = "title",     label = "Joueurs" },
-            { id = "1",   type = "submenu",   label = "Gestion des joueurs", icon = "👤", submenuId = "admin_players" },
-            { id = "2",   type = "submenu",   label = "Sanctions",           icon = "🔨", submenuId = "admin_sanctions" },
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Commande admin
+-- ─────────────────────────────────────────────────────────────────────────────
 
-            { id = "sep1", type = "separator", label = "Véhicules" },
-            { id = "3",   type = "submenu",   label = "Spawn véhicule",      icon = "🚗", submenuId = "admin_vehicles" },
-            { id = "4",   type = "button",    label = "Supprimer les véhicules proches", icon = "🗑️", color = "warning" },
-            { id = "5",   type = "button",    label = "Fixer mon véhicule",  icon = "🔧" },
-
-            { id = "sep2", type = "separator", label = "Téléportation" },
-            { id = "6",   type = "submenu",   label = "Téléportation",       icon = "📍", submenuId = "admin_teleport" },
-
-            { id = "sep3", type = "separator", label = "Monde" },
-            { id = "7",   type = "submenu",   label = "Météo / Heure",       icon = "🌤️", submenuId = "admin_world" },
-
-            { id = "sep4", type = "separator", label = "Outils" },
-            { id = "8",   type = "button",    label = "God Mode",            icon = "🛡️" },
-            { id = "9",   type = "button",    label = "Invisible",           icon = "👻" },
-            { id = "10",  type = "button",    label = "NoClip",              icon = "🌀" },
-            { id = "11",  type = "button",    label = "Vitesse illimitée",   icon = "⚡" },
-
-            { id = "sep5", type = "separator" },
-            { id = "12",  type = "button",    label = "Fermer le menu",      icon = "✖️", color = "danger" },
-        }
-    })
-end
-
-local function openPlayersMenu()
-    openMenu({
-        menuId   = "admin_players",
-        title    = "JOUEURS",
-        subtitle = "Gestion des joueurs",
-        items    = {
-            { id = "t1",  type = "title",  label = "Actions globales" },
-            { id = "p1",  type = "button", label = "Lister tous les joueurs",  icon = "📋" },
-            { id = "p2",  type = "button", label = "Freeze tous les joueurs",  icon = "🧊", color = "warning" },
-            { id = "p3",  type = "button", label = "Heal tous les joueurs",    icon = "💚" },
-
-            { id = "sep1", type = "separator", label = "Joueur ciblé" },
-            { id = "p4",  type = "input",  label = "ID du joueur",    icon = "🔢", placeholder = "Ex: 1", inputType = "number", min = 1 },
-            { id = "p5",  type = "button", label = "Téléporter vers le joueur", icon = "📍" },
-            { id = "p6",  type = "button", label = "Ramener le joueur",         icon = "🔗" },
-            { id = "p7",  type = "button", label = "Spectate joueur",           icon = "👁️" },
-            { id = "p8",  type = "button", label = "Heal joueur",               icon = "💊" },
-            { id = "p9",  type = "button", label = "Revive joueur",             icon = "💉" },
-            { id = "p10", type = "button", label = "Donner de l'argent",        icon = "💰" },
-
-            { id = "sep2", type = "separator" },
-            { id = "p99", type = "button", label = "← Retour",                 icon = "←" },
-        }
-    })
-end
-
-local function openSanctionsMenu()
-    openMenu({
-        menuId   = "admin_sanctions",
-        title    = "SANCTIONS",
-        subtitle = "Gestion des punitions",
-        items    = {
-            { id = "t1",  type = "title",  label = "Cible" },
-            { id = "s0",  type = "input",  label = "ID du joueur",  icon = "🔢", placeholder = "Ex: 2", inputType = "number", min = 1 },
-            { id = "s1",  type = "input",  label = "Raison",        icon = "📝", placeholder = "Motif de la sanction" },
-
-            { id = "sep1", type = "separator", label = "Actions" },
-            { id = "s2",  type = "button", label = "Kick joueur",   icon = "👢", color = "warning" },
-            { id = "s3",  type = "button", label = "Ban temporaire", icon = "⏳", color = "danger" },
-            { id = "s4",  type = "button", label = "Ban permanent",  icon = "🔨", color = "danger" },
-            { id = "s5",  type = "button", label = "Warn joueur",    icon = "⚠️", color = "warning" },
-            { id = "s6",  type = "button", label = "Mute joueur",    icon = "🔇" },
-
-            { id = "sep2", type = "separator" },
-            { id = "s99", type = "button", label = "← Retour",      icon = "←" },
-        }
-    })
-end
-
-local function openVehiclesMenu()
-    openMenu({
-        menuId   = "admin_vehicles",
-        title    = "VÉHICULES",
-        subtitle = "Spawn & gestion",
-        items    = {
-            { id = "t1",  type = "title",  label = "Spawn" },
-            { id = "v1",  type = "input",  label = "Nom du modèle", icon = "🔑", placeholder = "Ex: adder, zentorno..." },
-            { id = "v2",  type = "button", label = "Spawner le véhicule", icon = "🚗", color = "success" },
-
-            { id = "sep1", type = "separator", label = "Catégories rapides" },
-            { id = "v3",  type = "button", label = "Voitures de sport",  icon = "🏎️" },
-            { id = "v4",  type = "button", label = "SUV / 4x4",          icon = "🚙" },
-            { id = "v5",  type = "button", label = "Motos",              icon = "🏍️" },
-            { id = "v6",  type = "button", label = "Hélicoptères",       icon = "🚁" },
-            { id = "v7",  type = "button", label = "Avions",             icon = "✈️" },
-            { id = "v8",  type = "button", label = "Bateaux",            icon = "⛵" },
-
-            { id = "sep2", type = "separator", label = "Mon véhicule" },
-            { id = "v9",  type = "button", label = "Réparer",     icon = "🔧" },
-            { id = "v10", type = "button", label = "Supprimer",   icon = "🗑️", color = "danger" },
-
-            { id = "sep3", type = "separator" },
-            { id = "v99", type = "button", label = "← Retour",    icon = "←" },
-        }
-    })
-end
-
-local function openTeleportMenu()
-    openMenu({
-        menuId   = "admin_teleport",
-        title    = "TÉLÉPORTATION",
-        subtitle = "Lieux & coordonnées",
-        items    = {
-            { id = "t1",  type = "title",  label = "Lieux prédéfinis" },
-            { id = "tp1", type = "button", label = "LSIA (Aéroport)",   icon = "✈️" },
-            { id = "tp2", type = "button", label = "Pillbox Hill",      icon = "🏥" },
-            { id = "tp3", type = "button", label = "Paleto Bay",        icon = "🏖️" },
-            { id = "tp4", type = "button", label = "Sandy Shores",      icon = "🏜️" },
-            { id = "tp5", type = "button", label = "Fort Zancudo",      icon = "🪖" },
-            { id = "tp6", type = "button", label = "Commissariat LSPD", icon = "👮" },
-            { id = "tp7", type = "button", label = "Maison Maze Bank",  icon = "🏢" },
-            { id = "tp8", type = "button", label = "Hippodrome",        icon = "🐎" },
-
-            { id = "sep1", type = "separator", label = "Coordonnées" },
-            { id = "tp9",  type = "input",  label = "X", placeholder = "0.0", inputType = "number" },
-            { id = "tp10", type = "input",  label = "Y", placeholder = "0.0", inputType = "number" },
-            { id = "tp11", type = "input",  label = "Z", placeholder = "0.0", inputType = "number" },
-            { id = "tp12", type = "button", label = "Téléporter aux coordonnées", icon = "📍", color = "success" },
-
-            { id = "sep2", type = "separator" },
-            { id = "tp99", type = "button", label = "← Retour", icon = "←" },
-        }
-    })
-end
-
-local function openWorldMenu()
-    openMenu({
-        menuId   = "admin_world",
-        title    = "MONDE",
-        subtitle = "Météo & heure",
-        items    = {
-            { id = "t1",  type = "title",  label = "Météo" },
-            { id = "w1",  type = "button", label = "Ensoleillé",  icon = "☀️" },
-            { id = "w2",  type = "button", label = "Nuageux",     icon = "🌥️" },
-            { id = "w3",  type = "button", label = "Pluie",       icon = "🌧️" },
-            { id = "w4",  type = "button", label = "Orage",       icon = "⛈️" },
-            { id = "w5",  type = "button", label = "Neige",       icon = "🌨️" },
-            { id = "w6",  type = "button", label = "Brouillard",  icon = "🌫️" },
-            { id = "w7",  type = "button", label = "Tempête",     icon = "🌪️" },
-
-            { id = "sep1", type = "separator", label = "Heure" },
-            { id = "w8",  type = "input",  label = "Heures (0-23)",  placeholder = "12", inputType = "number", min = 0, max = 23 },
-            { id = "w9",  type = "input",  label = "Minutes (0-59)", placeholder = "0",  inputType = "number", min = 0, max = 59 },
-            { id = "w10", type = "button", label = "Appliquer l'heure", icon = "🕐", color = "success" },
-
-            { id = "sep2", type = "separator" },
-            { id = "w11", type = "button", label = "Geler le temps",   icon = "🧊" },
-            { id = "w12", type = "button", label = "Dégeler le temps", icon = "🔥" },
-
-            { id = "sep3", type = "separator" },
-            { id = "w99", type = "button", label = "← Retour", icon = "←" },
-        }
-    })
-end
-
--- ============================================================
--- 🔹 COMMANDE
--- ============================================================
 RegisterCommand('admin', function()
-    if isAdminMenuOpen then
-        closeMenu()
+    if K.isOpen() then
+        K.close()
         return
     end
     TriggerServerEvent('k_menu:checkAdmin')
 end, false)
 
-RegisterKeyMapping('admin', 'Ouvrir Menu Admin', 'keyboard', 'F10')
+RegisterKeyMapping('admin', 'Ouvrir Menu Admin', 'keyboard', Config.AdminKey)
 
--- ============================================================
--- 🔹 EVENT: Permission accordée par le serveur
--- ============================================================
 RegisterNetEvent('k_menu:openAdmin', function()
-    openAdminMenu()
+    menuPrincipal()
 end)
 
--- ============================================================
--- 🔹 CALLBACKS NUI
--- ============================================================
-RegisterNUICallback('closeMenu', function(_, cb)
-    closeMenu()
-    cb({})
-end)
-
--- FIX: ajout de la gestion du retour vers admin_main depuis un sous-menu
-RegisterNUICallback('openSubmenu', function(data, cb)
-    local submenuId = data.submenuId or data.id
-
-    if     submenuId == "admin_players"   then openPlayersMenu()
-    elseif submenuId == "admin_sanctions" then openSanctionsMenu()
-    elseif submenuId == "admin_vehicles"  then openVehiclesMenu()
-    elseif submenuId == "admin_teleport"  then openTeleportMenu()
-    elseif submenuId == "admin_world"     then openWorldMenu()
-    -- FIX: permettre le retour vers le menu principal depuis un sous-menu
-    elseif submenuId == "admin_main"      then openAdminMenu()
-    end
-
-    cb({})
-end)
-
-RegisterNUICallback('buttonClick', function(data, cb)
-    local id = data.id
-    print("^5[admin] buttonClick:", id)
-
-    -- ── Menu principal ──
-    if     id == "4"  then TriggerServerEvent('k_menu:admin', 'deleteNearVehicles')
-    elseif id == "5"  then TriggerServerEvent('k_menu:admin', 'fixMyVehicle')
-    elseif id == "8"  then TriggerServerEvent('k_menu:admin', 'godMode')
-    elseif id == "9"  then TriggerServerEvent('k_menu:admin', 'invisible')
-    elseif id == "10" then TriggerServerEvent('k_menu:admin', 'noclip')
-    elseif id == "11" then TriggerServerEvent('k_menu:admin', 'speedBoost')
-    elseif id == "12" then closeMenu()
-
-    -- ── Joueurs ──
-    elseif id == "p1"  then TriggerServerEvent('k_menu:admin', 'listPlayers')
-    elseif id == "p2"  then TriggerServerEvent('k_menu:admin', 'freezeAll')
-    elseif id == "p3"  then TriggerServerEvent('k_menu:admin', 'healAll')
-    elseif id == "p5"  then TriggerServerEvent('k_menu:admin', 'tpToPlayer')
-    elseif id == "p6"  then TriggerServerEvent('k_menu:admin', 'bringPlayer')
-    elseif id == "p7"  then TriggerServerEvent('k_menu:admin', 'spectate')
-    elseif id == "p8"  then TriggerServerEvent('k_menu:admin', 'healPlayer')
-    elseif id == "p9"  then TriggerServerEvent('k_menu:admin', 'revivePlayer')
-    elseif id == "p10" then TriggerServerEvent('k_menu:admin', 'giveMoney')
-    elseif id == "p99" then goBack()
-
-    -- ── Sanctions ──
-    -- FIX: passer les inputs s0 (targetId) et s1 (reason) au serveur
-    elseif id == "s2"  then
-        TriggerServerEvent('k_menu:adminDoKick',    tonumber(adminInputs["s0"]), adminInputs["s1"])
-    elseif id == "s3"  then TriggerServerEvent('k_menu:admin', 'tempban')
-    elseif id == "s4"  then
-        TriggerServerEvent('k_menu:adminDoPermban', tonumber(adminInputs["s0"]), adminInputs["s1"])
-    elseif id == "s5"  then TriggerServerEvent('k_menu:admin', 'warn')
-    elseif id == "s6"  then TriggerServerEvent('k_menu:admin', 'mute')
-    elseif id == "s99" then goBack()
-
-    -- ── Véhicules ──
-    elseif id == "v2"  then TriggerServerEvent('k_menu:admin', 'spawnVehicle', adminInputs["v1"])
-    elseif id == "v3"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'sport')
-    elseif id == "v4"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'suv')
-    elseif id == "v5"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'moto')
-    elseif id == "v6"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'heli')
-    elseif id == "v7"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'plane')
-    elseif id == "v8"  then TriggerServerEvent('k_menu:admin', 'spawnCategory', 'boat')
-    elseif id == "v9"  then TriggerServerEvent('k_menu:admin', 'fixMyVehicle')
-    elseif id == "v10" then TriggerServerEvent('k_menu:admin', 'deleteMyVehicle')
-    elseif id == "v99" then goBack()
-
-    -- ── Téléportation ──
-    elseif id == "tp1"  then TriggerServerEvent('k_menu:admin', 'tpTo', -1037.7, -2738.5, 20.2)
-    elseif id == "tp2"  then TriggerServerEvent('k_menu:admin', 'tpTo', 357.8,   -594.0,  28.7)
-    elseif id == "tp3"  then TriggerServerEvent('k_menu:admin', 'tpTo', -243.4,  6331.3,  32.4)
-    elseif id == "tp4"  then TriggerServerEvent('k_menu:admin', 'tpTo', 1853.0,  3686.5,  34.3)
-    elseif id == "tp5"  then TriggerServerEvent('k_menu:admin', 'tpTo', -2047.6, 3132.1,  32.8)
-    elseif id == "tp6"  then TriggerServerEvent('k_menu:admin', 'tpTo', 441.8,   -980.0,  30.7)
-    elseif id == "tp7"  then TriggerServerEvent('k_menu:admin', 'tpTo', -75.5,   -818.6,  326.2)
-    elseif id == "tp8"  then TriggerServerEvent('k_menu:admin', 'tpTo', -329.0,  -103.0,  35.6)
-    elseif id == "tp12" then
-        -- FIX: passer les coordonnées X, Y, Z depuis les inputs
-        local x = tonumber(adminInputs["tp9"])  or 0.0
-        local y = tonumber(adminInputs["tp10"]) or 0.0
-        local z = tonumber(adminInputs["tp11"]) or 0.0
-        TriggerServerEvent('k_menu:admin', 'tpTo', x, y, z)
-    elseif id == "tp99" then goBack()
-
-    -- ── Météo ──
-    elseif id == "w1"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'EXTRASUNNY')
-    elseif id == "w2"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'CLOUDS')
-    elseif id == "w3"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'RAIN')
-    elseif id == "w4"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'THUNDER')
-    elseif id == "w5"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'SNOW')
-    elseif id == "w6"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'FOGGY')
-    elseif id == "w7"  then TriggerServerEvent('k_menu:admin', 'setWeather', 'SMOG')
-    elseif id == "w10" then
-        -- FIX: transmettre h et m lus depuis les inputs
-        local h = adminInputs["w8"] or "12"
-        local m = adminInputs["w9"] or "0"
-        TriggerServerEvent('k_menu:admin', 'setTime', h, m)
-    elseif id == "w11" then TriggerServerEvent('k_menu:admin', 'freezeTime', true)
-    elseif id == "w12" then TriggerServerEvent('k_menu:admin', 'freezeTime', false)
-    elseif id == "w99" then goBack()
-    end
-
-    cb({})
-end)
-
--- ── inputChange — stocker les valeurs ─────────────────────────
-RegisterNUICallback('inputChange', function(data, cb)
-    if data.id then
-        adminInputs[data.id] = data.value
-    end
-    cb({})
-end)
-
-RegisterNUICallback('inputConfirm', function(data, cb)
-    if data.id then
-        adminInputs[data.id] = data.value
-    end
-    cb({})
-end)
-
--- FIX: event pour appliquer le temps reçu du serveur (broadcast à tous)
-RegisterNetEvent('k_menu:adminApplyTime', function(h, m)
-    NetworkOverrideClockTime(h, m, 0)
-end)
-
-print("^2[k_menu] Admin Client READY")
+print("^2[k_menu] Admin client chargé^7")

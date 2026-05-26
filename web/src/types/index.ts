@@ -1,55 +1,47 @@
-// ── Item Types ────────────────────────────────────────────────────────────────
-export type MenuItemType = 'button' | 'input' | 'title' | 'separator' | 'submenu' | 'toggle' | 'slider'
+// types/index.ts
 
-export interface BaseMenuItem {
-  id: string
-  type: MenuItemType
-  label?: string
+export type ItemType =
+  | 'button'
+  | 'input'
+  | 'toggle'
+  | 'separator'
+  | 'submenu'
+
+export interface BaseItem {
+  id:          string
+  type:        ItemType
+  label?:      string
+  icon?:       string
+  disabled?:   boolean
   description?: string
-  icon?: string
-  disabled?: boolean
 }
 
-export interface ButtonItem extends BaseMenuItem {
-  type: 'button'
-  value?: string | number | boolean
+export interface ButtonItem extends BaseItem {
+  type:       'button'
+  color?:     'danger' | 'success' | 'warning'
   rightLabel?: string
-  color?: 'default' | 'danger' | 'success' | 'warning'
 }
 
-export interface InputItem extends BaseMenuItem {
-  type: 'input'
+export interface InputItem extends BaseItem {
+  type:        'input'
   placeholder?: string
-  inputType?: 'text' | 'number' | 'password'
-  value?: string
-  min?: number
-  max?: number
+  inputType?:  'text' | 'number' | 'password'
+  value?:      string
+  min?:        number
+  max?:        number
 }
 
-export interface ToggleItem extends BaseMenuItem {
-  type: 'toggle'
+export interface ToggleItem extends BaseItem {
+  type:  'toggle'
   value?: boolean
-  color?: 'default' | 'danger' | 'success' | 'warning'
 }
 
-export interface SliderItem extends BaseMenuItem {
-  type: 'slider'
-  value?: number
-  min?: number
-  max?: number
-  step?: number
+export interface SeparatorItem extends BaseItem {
+  type:  'separator'
 }
 
-export interface TitleItem extends BaseMenuItem {
-  type: 'title'
-}
-
-export interface SeparatorItem extends BaseMenuItem {
-  type: 'separator'
-}
-
-export interface SubMenuItem extends BaseMenuItem {
-  type: 'submenu'
+export interface SubmenuItem extends BaseItem {
+  type:      'submenu'
   submenuId: string
 }
 
@@ -57,26 +49,20 @@ export type MenuItem =
   | ButtonItem
   | InputItem
   | ToggleItem
-  | SliderItem
-  | TitleItem
   | SeparatorItem
-  | SubMenuItem
+  | SubmenuItem
 
 export interface MenuData {
-  id: string
-  title: string
+  id:       string
+  title:    string
   subtitle?: string
-  banner?: string
-  items: MenuItem[]
+  items:    MenuItem[]
 }
 
 export interface NUIMessage {
-  action: 'openMenu' | 'closeMenu' | 'setItems' | 'updateItem' | 'goBack'
-  menuId?: string
-  title?: string
+  action:   'open' | 'close'
+  id?:      string
+  title?:   string
   subtitle?: string
-  banner?: string
-  items?: MenuItem[]
-  item?: MenuItem
-  visible?: boolean
+  items?:   MenuItem[]
 }

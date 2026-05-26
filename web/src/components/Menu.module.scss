@@ -1,0 +1,212 @@
+@use '../styles/vars' as *;
+
+// ── Container ─────────────────────────────────────────────────────────────────
+.menu {
+  width: $w;
+  background: $bg;
+  border: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideIn $dur $ease both;
+  max-height: 480px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.header {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid $border;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $text;
+}
+
+.sub {
+  font-size: 11px;
+  color: $text-dim;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+}
+
+// ── Item list ─────────────────────────────────────────────────────────────────
+.list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 0;
+}
+
+// ── Separator ─────────────────────────────────────────────────────────────────
+.sep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 3px;
+  pointer-events: none;
+
+  span {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: $text-muted;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+.sepLine {
+  flex: 1;
+  height: 1px;
+  background: $border;
+}
+
+// ── Item ──────────────────────────────────────────────────────────────────────
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  height: $item-h;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: background $dur $ease, border-color $dur $ease;
+
+  &:hover { background: rgba(255,255,255,0.03); }
+}
+
+.sel {
+  background: rgba(255,255,255,0.05) !important;
+  border-left-color: $accent;
+
+  .label { color: $text; }
+}
+
+.dis {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+// ── Label ─────────────────────────────────────────────────────────────────────
+.label {
+  font-size: 13px;
+  color: rgba($text, 0.7);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  transition: color $dur $ease;
+}
+
+// ── Right ─────────────────────────────────────────────────────────────────────
+.right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.arrow {
+  font-size: 14px;
+  color: $text-dim;
+  transition: transform $dur $ease;
+
+  .sel & {
+    transform: translateX(2px);
+    color: $text;
+  }
+}
+
+.badge {
+  font-size: 10px;
+  color: $text-dim;
+  letter-spacing: 0.06em;
+}
+
+// ── Input ─────────────────────────────────────────────────────────────────────
+.input {
+  font-family: $font;
+  font-size: 12px;
+  background: $surface;
+  border: 1px solid $border-hi;
+  color: $text;
+  padding: 3px 8px;
+  width: 90px;
+  outline: none;
+  border-radius: $radius;
+  transition: border-color $dur $ease;
+
+  &:focus { border-color: $accent; }
+  &::placeholder { color: $text-muted; }
+
+  &[type='number'] {
+    appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button { display: none; }
+  }
+}
+
+// ── Toggle ────────────────────────────────────────────────────────────────────
+.toggle {
+  width: 28px;
+  height: 14px;
+  background: $border;
+  border-radius: 7px;
+  position: relative;
+  cursor: pointer;
+  transition: background $dur $ease;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: $text-dim;
+    transition: transform $dur $ease, background $dur $ease;
+  }
+}
+
+.on {
+  background: rgba($accent, 0.2);
+
+  &::after {
+    transform: translateX(14px);
+    background: $accent;
+  }
+}
+
+// ── Color variants ────────────────────────────────────────────────────────────
+.c_danger  .label { color: rgba($danger,  0.9); }
+.c_success .label { color: rgba($success, 0.9); }
+.c_warning .label { color: rgba($warning, 0.9); }
+
+.c_danger.sel  { border-left-color: $danger;  background: rgba($danger,  0.06) !important; }
+.c_success.sel { border-left-color: $success; background: rgba($success, 0.06) !important; }
+.c_warning.sel { border-left-color: $warning; background: rgba($warning, 0.06) !important; }
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.footer {
+  display: flex;
+  gap: 12px;
+  padding: 7px 14px;
+  border-top: 1px solid $border;
+  flex-shrink: 0;
+
+  span {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: $text-muted;
+    text-transform: uppercase;
+  }
+}
