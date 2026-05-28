@@ -70,37 +70,55 @@ RegisterNetEvent('k_menu:admin', function(action, a1, a2, a3)
         end
         notify(src, "Tous les joueurs freezés.", 'success')
 
-    elseif action == 'tpToPlayer' then TriggerClientEvent('k_menu:fx:tpTo', src, GetEntityCoords(GetPlayerPed(a1)))
-    elseif action == 'bring'       then TriggerClientEvent('k_menu:fx:tpTo', a1, GetEntityCoords(GetPlayerPed(src)))
-    elseif action == 'healPlayer'  then TriggerClientEvent('k_menu:fx:heal', a1)
-    elseif action == 'revivePlayer'then TriggerClientEvent('k_menu:fx:revive', a1)
-    elseif action == 'spectate'    then TriggerClientEvent('k_menu:fx:spectate', src)
+    -- FIX #4 : tpToPlayer — unpacker le vector3 en x, y, z séparés
+    elseif action == 'tpToPlayer' then
+        if not a1 then notify(src, "ID joueur manquant.", 'error') return end
+        local targetPed = GetPlayerPed(a1)
+        if not DoesEntityExist(targetPed) then notify(src, "Joueur introuvable.", 'error') return end
+        local coords = GetEntityCoords(targetPed)
+        TriggerClientEvent('k_menu:fx:tpTo', src, coords.x, coords.y, coords.z)
+
+    -- FIX #4 : bring — unpacker le vector3 en x, y, z séparés
+    elseif action == 'bring' then
+        if not a1 then notify(src, "ID joueur manquant.", 'error') return end
+        local adminPed = GetPlayerPed(src)
+        local coords = GetEntityCoords(adminPed)
+        TriggerClientEvent('k_menu:fx:tpTo', a1, coords.x, coords.y, coords.z)
+
+    elseif action == 'healPlayer'   then TriggerClientEvent('k_menu:fx:heal',      a1)
+    elseif action == 'revivePlayer' then TriggerClientEvent('k_menu:fx:revive',    a1)
+    elseif action == 'spectate'     then TriggerClientEvent('k_menu:fx:spectate',  src)
 
     -- Outils
+    -- FIX #5 : passer le booléen a1 directement
     elseif action == 'godMode'    then TriggerClientEvent('k_menu:fx:godMode',    src, a1)
     elseif action == 'invisible'  then TriggerClientEvent('k_menu:fx:invisible',  src, a1)
     elseif action == 'speedBoost' then TriggerClientEvent('k_menu:fx:speedBoost', src, a1)
     elseif action == 'noclip'     then TriggerClientEvent('k_menu:fx:noclip',     src)
 
     -- Véhicules
-    elseif action == 'spawnVeh'  then TriggerClientEvent('k_menu:fx:spawnVeh',  src, a1 or 'adder')
-    elseif action == 'spawnCat'  then
+    elseif action == 'spawnVeh' then
+        TriggerClientEvent('k_menu:fx:spawnVeh', src, a1 or 'adder')
+
+    elseif action == 'spawnCat' then
         local cats = {
-            sport = 'adder', suv = 'granger', moto = 'bati801',
-            heli  = 'maverick', plane = 'lazer',
+            sport = 'adder',   suv  = 'granger',
+            moto  = 'bati801', heli = 'maverick', plane = 'lazer',
         }
         TriggerClientEvent('k_menu:fx:spawnVeh', src, cats[a1] or 'adder')
-    elseif action == 'fixVeh'    then TriggerClientEvent('k_menu:fx:fixVeh',    src)
-    elseif action == 'delVeh'    then TriggerClientEvent('k_menu:fx:delVeh',    src)
-    elseif action == 'deleteNear'then TriggerClientEvent('k_menu:fx:deleteNear',src)
 
-    -- Téléportation
-    elseif action == 'tpTo' then TriggerClientEvent('k_menu:fx:tpTo', src, a1, a2, a3)
+    elseif action == 'fixVeh'     then TriggerClientEvent('k_menu:fx:fixVeh',     src)
+    elseif action == 'delVeh'     then TriggerClientEvent('k_menu:fx:delVeh',     src)
+    elseif action == 'deleteNear' then TriggerClientEvent('k_menu:fx:deleteNear', src)
+
+    -- Téléportation (a1=x, a2=y, a3=z — déjà corrects)
+    elseif action == 'tpTo' then
+        TriggerClientEvent('k_menu:fx:tpTo', src, a1, a2, a3)
 
     -- Météo (broadcast)
     elseif action == 'weather' then
         TriggerClientEvent('k_menu:fx:weather', -1, a1)
-        notify(src, "Météo : " .. a1, 'success')
+        notify(src, "Météo : " .. tostring(a1), 'success')
 
     -- Heure (broadcast)
     elseif action == 'setTime' then
@@ -111,10 +129,13 @@ RegisterNetEvent('k_menu:admin', function(action, a1, a2, a3)
 
     elseif action == 'freezeTime' then
         TriggerClientEvent('k_menu:fx:freezeTime', -1, a1, frozenH, frozenM)
+        if a1 then notify(src, "Temps gelé.", 'info')
+        else        notify(src, "Temps dégelé.", 'info') end
 
     -- Warn
     elseif action == 'warn' then
-        notify(a1, "Avertissement de l'admin : " .. (a2 or ""), 'warning')
+        if not a1 then notify(src, "ID joueur manquant.", 'error') return end
+        notify(a1,  "Avertissement de l'admin : " .. (a2 or ""), 'warning')
         notify(src, "Warn envoyé à " .. tostring(a1), 'success')
     end
 end)
@@ -126,6 +147,7 @@ end)
 RegisterNetEvent('k_menu:adminKick', function(targetId, reason)
     local src = source
     if not isAdmin(src) then deny(src) return end
+    if not targetId then notify(src, "ID manquant.", 'error') return end
     DropPlayer(targetId, "Kick : " .. (reason or "Aucune raison"))
     notify(src, "Joueur " .. tostring(targetId) .. " kické.", 'success')
 end)
@@ -133,7 +155,7 @@ end)
 RegisterNetEvent('k_menu:adminBanTemp', function(targetId, reason)
     local src = source
     if not isAdmin(src) then deny(src) return end
-    -- Intégrer ici ton système de ban (ex: oxmysql, ESX ban, etc.)
+    if not targetId then notify(src, "ID manquant.", 'error') return end
     DropPlayer(targetId, "Ban temporaire : " .. (reason or ""))
     notify(src, "Joueur banni temporairement.", 'success')
 end)
@@ -141,6 +163,7 @@ end)
 RegisterNetEvent('k_menu:adminBanPerm', function(targetId, reason)
     local src = source
     if not isAdmin(src) then deny(src) return end
+    if not targetId then notify(src, "ID manquant.", 'error') return end
     DropPlayer(targetId, "BAN PERMANENT : " .. (reason or ""))
     print(("^1[admin] BAN PERM : %s par %s^7"):format(
         GetPlayerName(targetId), GetPlayerName(src)))

@@ -8,7 +8,6 @@ end
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Toggle noclip
--- Déclenché depuis le serveur ET en local (les deux cas)
 -- ─────────────────────────────────────────────────────────────────────────────
 
 local function toggleNoclip()
@@ -16,30 +15,29 @@ local function toggleNoclip()
     local ped = PlayerPedId()
 
     if active then
-        -- Fermer le menu pour libérer le focus NUI (sinon les touches ne passent pas à GTA)
+        -- Fermer le menu pour libérer le focus NUI
         K.close()
-
         SetEntityInvincible(ped, true)
         SetEntityCollision(ped, false, false)
         SetEntityAlpha(ped, 180, false)
-        FreezeEntityPosition(ped, false)   -- laisser le thread gérer le freeze
+        FreezeEntityPosition(ped, false)
         notify("ON")
     else
         SetEntityInvincible(ped, false)
         SetEntityCollision(ped, true, true)
         ResetEntityAlpha(ped)
         SetEntityVelocity(ped, 0.0, 0.0, 0.0)
-        FreezeEntityPosition(ped, false)   -- dégeler proprement
+        FreezeEntityPosition(ped, false)
+        -- FIX #3 : remettre la gravité proprement ici
+        SetPedGravity(ped, true)
         notify("OFF")
     end
 end
 
--- Event réseau (depuis server/admin.lua → TriggerClientEvent)
 RegisterNetEvent('k_menu:fx:noclip', function()
     toggleNoclip()
 end)
 
--- Event local (si jamais déclenché directement côté client)
 AddEventHandler('k_menu:localNoclip', function()
     toggleNoclip()
 end)
@@ -57,12 +55,13 @@ Citizen.CreateThread(function()
 
             local ped = PlayerPedId()
 
-            -- Vitesse : shift = rapide, ctrl = lent
+            -- FIX #2 : CTRL séparé de la vitesse de base
+            -- SHIFT  (21) = rapide
+            -- normal       = normal
+            -- pas de conflit avec descente
             local speed = 0.5
-            if IsControlPressed(0, 21) then speed = 3.0   -- SHIFT
-            elseif IsControlPressed(0, 36) then speed = 0.1 end  -- CTRL (bas) → on gère séparément
+            if IsControlPressed(0, 21) then speed = 3.0 end  -- SHIFT = rapide
 
-            -- Direction caméra
             local camRot  = GetGameplayCamRot(2)
             local heading = camRot.z
             local pitch   = camRot.x
@@ -81,42 +80,23 @@ Citizen.CreateThread(function()
 
             local move = vector3(0.0, 0.0, 0.0)
 
-            -- Avancer / reculer
-            if IsControlPressed(0, 32) then move = move + fwd   end  -- W / joystick haut
-            if IsControlPressed(0, 33) then move = move - fwd   end  -- S / joystick bas
-            -- Gauche / droite
+            if IsControlPressed(0, 32) then move = move + fwd   end  -- W
+            if IsControlPressed(0, 33) then move = move - fwd   end  -- S
             if IsControlPressed(0, 34) then move = move - right end  -- A
             if IsControlPressed(0, 35) then move = move + right end  -- D
-            -- Monter / descendre
-            if IsControlPressed(0, 22) then move = move + up    end  -- SPACE
-            if IsControlPressed(0, 36) then move = move - up    end  -- CTRL
+            if IsControlPressed(0, 22) then move = move + up    end  -- SPACE = monter
+            if IsControlPressed(0, 36) then move = move - up    end  -- CTRL  = descendre (FIX #2 : vitesse normale)
 
-            -- Appliquer seulement si mouvement
-            if move ~= vector3(0,0,0) then
+            if move ~= vector3(0.0, 0.0, 0.0) then
                 local pos = GetEntityCoords(ped) + (move * speed)
                 SetEntityCoordsNoOffset(ped, pos.x, pos.y, pos.z, false, false, false)
             end
 
-            -- Annuler la physique / gravité en permanence
+            -- Annuler physique / gravité
             SetEntityVelocity(ped, 0.0, 0.0, 0.0)
             SetPedGravity(ped, false)
             FreezeEntityPosition(ped, true)
-
-            -- Masquer le ped (optionnel, évite l'animation de chute)
-            SetEntityAnimationFlag(ped, 1, true)
         end
-    end
-end)
-
--- Remettre la gravité quand on désactive
-Citizen.CreateThread(function()
-    local wasActive = false
-    while true do
-        Citizen.Wait(100)
-        if wasActive and not active then
-            SetPedGravity(PlayerPedId(), true)
-        end
-        wasActive = active
     end
 end)
 

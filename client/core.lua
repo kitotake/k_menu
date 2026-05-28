@@ -2,12 +2,12 @@
 -- Moteur principal du menu côté client
 
 local Menu = {}
-Menu._stack  = {}   -- pile de menus ouverts
+Menu._stack  = {}
 Menu._open   = false
-Menu._inputs = {}   -- valeurs des inputs par id
+Menu._inputs = {}
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- Helpers internes
+-- Helpers
 -- ─────────────────────────────────────────────────────────────────────────────
 
 local function dbg(...)
@@ -26,8 +26,6 @@ end
 -- API publique
 -- ─────────────────────────────────────────────────────────────────────────────
 
---- Ouvre un menu et l'empile
----@param menu table { id, title, subtitle?, items[] }
 function Menu.open(menu)
     if not menu or not menu.id then return end
     Menu._open = true
@@ -43,7 +41,6 @@ function Menu.open(menu)
     dbg("open →", menu.id)
 end
 
---- Ferme tout
 function Menu.close()
     Menu._open   = false
     Menu._stack  = {}
@@ -53,7 +50,6 @@ function Menu.close()
     dbg("close")
 end
 
---- Revient au menu précédent
 function Menu.back()
     if #Menu._stack <= 1 then
         Menu.close()
@@ -71,19 +67,14 @@ function Menu.back()
     dbg("back →", prev.id)
 end
 
---- Lit la valeur d'un input
----@param id string
----@return any
 function Menu.input(id)
     return Menu._inputs[id]
 end
 
---- Vérifie si un menu est ouvert
 function Menu.isOpen()
     return Menu._open
 end
 
--- Export global pour les autres fichiers
 _G.K = Menu
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -102,12 +93,14 @@ end)
 
 RegisterNUICallback('button', function(data, cb)
     dbg("button →", data.id)
+    -- FIX #6 : TriggerEvent (local) → AddEventHandler dans admin.lua
     TriggerEvent('k_menu:button', data.id, data.menuId)
     cb({})
 end)
 
 RegisterNUICallback('submenu', function(data, cb)
     dbg("submenu →", data.submenuId)
+    -- FIX #6 : TriggerEvent (local) → AddEventHandler dans admin.lua
     TriggerEvent('k_menu:submenu', data.submenuId, data.menuId)
     cb({})
 end)
@@ -123,6 +116,7 @@ end)
 RegisterNUICallback('toggle', function(data, cb)
     if data.id then
         Menu._inputs[data.id] = data.value
+        -- FIX #6 : TriggerEvent (local)
         TriggerEvent('k_menu:toggle', data.id, data.value, data.menuId)
     end
     cb({})
@@ -143,21 +137,21 @@ RegisterCommand('menu', function()
         subtitle = "Démo",
         items    = {
             { id = "sep1", type = "separator", label = "Véhicule" },
-            { id = "b1",   type = "button",    label = "Réparer",    icon = "wrench" },
-            { id = "b2",   type = "button",    label = "Supprimer",  icon = "trash",  color = "danger" },
+            { id = "b1",   type = "button",    label = "Réparer",   color = "success" },
+            { id = "b2",   type = "button",    label = "Supprimer", color = "danger" },
             { id = "sep2", type = "separator", label = "Joueur" },
-            { id = "i1",   type = "input",     label = "Montant",    placeholder = "0", inputType = "number" },
-            { id = "t1",   type = "toggle",    label = "God Mode",   value = false },
+            { id = "i1",   type = "input",     label = "Montant",   placeholder = "0", inputType = "number" },
+            { id = "t1",   type = "toggle",    label = "God Mode",  value = false },
             { id = "sep3", type = "separator" },
-            { id = "s1",   type = "submenu",   label = "Plus",       icon = "chevron-right", submenuId = "demo_sub" },
+            { id = "s1",   type = "submenu",   label = "Plus",      submenuId = "demo_sub" },
         }
     })
 end, false)
 
 RegisterKeyMapping('menu', 'Ouvrir le menu', 'keyboard', Config.MenuKey)
 
--- Écoute du sous-menu demo
-RegisterNetEvent('k_menu:submenu', function(submenuId, _menuId)
+-- FIX #6 : AddEventHandler (local) au lieu de RegisterNetEvent
+AddEventHandler('k_menu:submenu', function(submenuId, _menuId)
     if submenuId == "demo_sub" then
         Menu.open({
             id    = "demo_sub",
@@ -170,7 +164,6 @@ RegisterNetEvent('k_menu:submenu', function(submenuId, _menuId)
     end
 end)
 
--- Event réseau pour ouvrir depuis le serveur
 RegisterNetEvent('k_menu:openFromServer', function(menu)
     Menu.open(menu)
 end)

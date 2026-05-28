@@ -17,9 +17,10 @@ end
 -- ─────────────────────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:godMode', function(enabled)
-    state.godMode = enabled
-    SetEntityInvincible(PlayerPedId(), enabled)
-    notify(enabled and "God Mode ON" or "God Mode OFF")
+    -- FIX #5 : enabled est un booléen direct depuis le serveur
+    state.godMode = enabled == true
+    SetEntityInvincible(PlayerPedId(), state.godMode)
+    notify(state.godMode and "God Mode ON" or "God Mode OFF")
 end)
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -27,23 +28,25 @@ end)
 -- ─────────────────────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:invisible', function(enabled)
-    state.invisible = enabled
-    SetEntityVisible(PlayerPedId(), not enabled, false)
-    notify(enabled and "Invisible ON" or "Invisible OFF")
+    state.invisible = enabled == true
+    SetEntityVisible(PlayerPedId(), not state.invisible, false)
+    notify(state.invisible and "Invisible ON" or "Invisible OFF")
 end)
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Speed Boost
+-- FIX #8 : Wait adaptatif — 0ms seulement quand actif
 -- ─────────────────────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:speedBoost', function(enabled)
-    state.speedBoost = enabled
-    notify(enabled and "Speed Boost ON" or "Speed Boost OFF")
+    state.speedBoost = enabled == true
+    notify(state.speedBoost and "Speed Boost ON" or "Speed Boost OFF")
 end)
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(0)
+        -- FIX #8 : Wait(0) seulement si actif, sinon 500ms
+        Citizen.Wait(state.speedBoost and 0 or 500)
         if state.speedBoost then
             local veh = GetVehiclePedIsIn(PlayerPedId(), false)
             if DoesEntityExist(veh) then
@@ -157,8 +160,8 @@ RegisterNetEvent('k_menu:fx:time', function(h, m)
 end)
 
 RegisterNetEvent('k_menu:fx:freezeTime', function(enabled, h, m)
-    state.timeFrozen = enabled
-    if enabled then
+    state.timeFrozen = enabled == true
+    if state.timeFrozen then
         NetworkOverrideClockTime(h or 12, m or 0, 0)
         notify("Temps gelé.", "info")
     else
