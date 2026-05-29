@@ -1,5 +1,6 @@
 // App.tsx
 import { useState, useCallback } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import type { MenuData, NUIMessage } from './types'
 import { useNUI } from './hooks/useNUI'
 import { Menu } from './components/Menu'
@@ -13,10 +14,10 @@ export default function App() {
 
     if (msg.action === 'open') {
       const m: MenuData = {
-        id:       msg.id    ?? `m_${Date.now()}`,
-        title:    msg.title ?? 'Menu',
+        id:       msg.id       ?? `m_${Date.now()}`,
+        title:    msg.title    ?? 'Menu',
         subtitle: msg.subtitle,
-        items:    msg.items ?? [],
+        items:    msg.items    ?? [],
       }
       setStack(prev => {
         const idx = prev.findIndex(x => x.id === m.id)
@@ -42,17 +43,19 @@ export default function App() {
 
   const active = stack[stack.length - 1] ?? null
 
-  if (!active) return null
-
   return (
     <div className={s.root}>
-      <Menu
-        key={active.id}
-        menu={active}
-        isRoot={stack.length === 1}
-        onClose={close}
-        onBack={back}
-      />
+      <AnimatePresence mode="wait">
+        {active && (
+          <Menu
+            key={active.id}
+            menu={active}
+            isRoot={stack.length === 1}
+            onClose={close}
+            onBack={back}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

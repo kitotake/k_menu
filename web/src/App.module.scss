@@ -5,5 +5,10 @@
   top: 50%;
   left: 40px;
   transform: translateY(-50%);
-  pointer-events: all;
+  pointer-events: none;
+
+  // On laisse pointer-events aux enfants
+  > * {
+    pointer-events: all;
+  }
 }

@@ -1,4 +1,5 @@
 // types/index.ts
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export type ItemType =
   | 'button'
@@ -8,31 +9,31 @@ export type ItemType =
   | 'submenu'
 
 export interface BaseItem {
-  id:          string
-  type:        ItemType
-  label?:      string
-  icon?:       string
-  disabled?:   boolean
+  id:           string
+  type:         ItemType
+  label?:       string
+  icon?:        string
+  disabled?:    boolean
   description?: string
 }
 
 export interface ButtonItem extends BaseItem {
-  type:       'button'
-  color?:     'danger' | 'success' | 'warning'
+  type:        'button'
+  color?:      'danger' | 'success' | 'warning'
   rightLabel?: string
 }
 
 export interface InputItem extends BaseItem {
-  type:        'input'
+  type:         'input'
   placeholder?: string
-  inputType?:  'text' | 'number' | 'password'
-  value?:      string
-  min?:        number
-  max?:        number
+  inputType?:   'text' | 'number' | 'password'
+  value?:       string
+  min?:         number
+  max?:         number
 }
 
 export interface ToggleItem extends BaseItem {
-  type:  'toggle'
+  type:   'toggle'
   value?: boolean
 }
 
@@ -53,16 +54,16 @@ export type MenuItem =
   | SubmenuItem
 
 export interface MenuData {
-  id:       string
-  title:    string
+  id:        string
+  title:     string
   subtitle?: string
-  items:    MenuItem[]
+  items:     MenuItem[]
 }
 
 export interface NUIMessage {
-  action:   'open' | 'close'
-  id?:      string
-  title?:   string
+  action:    'open' | 'close'
+  id?:       string
+  title?:    string
   subtitle?: string
-  items?:   MenuItem[]
+  items?:    MenuItem[]
 }

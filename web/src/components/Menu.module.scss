@@ -3,35 +3,71 @@
 // ── Container ─────────────────────────────────────────────────────────────────
 .menu {
   width: $w;
-  background: $bg;
+  background: $bg-card;
   border: 1px solid $border;
+  border-radius: $radius-lg;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: slideIn $dur $ease both;
-  max-height: 480px;
+  max-height: 520px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: $radius-lg;
+    background: linear-gradient(135deg, rgba($accent, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
 }
 
 // ── Header ────────────────────────────────────────────────────────────────────
 .header {
-  padding: 12px 14px 10px;
+  padding: 14px 16px 12px;
   border-bottom: 1px solid $border;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: $accent-dim;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent;
+  font-size: 12px;
   flex-shrink: 0;
 }
 
+.headerText {
+  flex: 1;
+  min-width: 0;
+}
+
 .title {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: $text;
+  line-height: 1;
 }
 
 .sub {
   font-size: 11px;
   color: $text-dim;
-  margin-top: 2px;
-  letter-spacing: 0.04em;
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+  font-family: $font-mono;
 }
 
 // ── Item list ─────────────────────────────────────────────────────────────────
@@ -39,7 +75,12 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 0;
+  padding: 6px 8px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 // ── Separator ─────────────────────────────────────────────────────────────────
@@ -47,12 +88,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px 3px;
+  padding: 8px 6px 4px;
   pointer-events: none;
+  margin-top: 4px;
 
   span {
     font-size: 9px;
-    letter-spacing: 0.14em;
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: $text-muted;
     white-space: nowrap;
@@ -70,34 +113,68 @@
 .item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 14px;
+  gap: 10px;
+  padding: 0 10px;
   height: $item-h;
   cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: background $dur $ease, border-color $dur $ease;
+  border-radius: $radius;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
 
-  &:hover { background: rgba(255,255,255,0.03); }
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: $accent;
+    border-radius: 0 2px 2px 0;
+    opacity: 0;
+    transform: scaleY(0.6);
+    transition: opacity $dur $ease, transform $dur $spring;
+  }
 }
 
 .sel {
-  background: rgba(255,255,255,0.05) !important;
-  border-left-color: $accent;
+  background: $accent-glow !important;
+  border-color: rgba($accent, 0.2) !important;
 
-  .label { color: $text; }
+  &::before {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  .label { color: $text !important; }
+  .iconWrap { color: $accent !important; }
 }
 
 .dis {
-  opacity: 0.3;
+  opacity: 0.28;
   pointer-events: none;
   cursor: not-allowed;
+}
+
+// ── Item icon ─────────────────────────────────────────────────────────────────
+.iconWrap {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-dim;
+  flex-shrink: 0;
+  font-size: 13px;
+  transition: color $dur $ease;
 }
 
 // ── Label ─────────────────────────────────────────────────────────────────────
 .label {
   font-size: 13px;
-  color: rgba($text, 0.7);
-  letter-spacing: 0.02em;
+  font-weight: 400;
+  color: $text-soft;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -110,42 +187,50 @@
 .right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
-  margin-left: 8px;
+  margin-left: auto;
 }
 
 .arrow {
-  font-size: 14px;
-  color: $text-dim;
-  transition: transform $dur $ease;
+  color: $text-muted;
+  font-size: 11px;
+  transition: transform $dur $ease, color $dur $ease;
 
   .sel & {
     transform: translateX(2px);
-    color: $text;
+    color: $accent;
   }
 }
 
 .badge {
   font-size: 10px;
+  font-weight: 500;
   color: $text-dim;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  background: $surface-hi;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: $font-mono;
 }
 
 // ── Input ─────────────────────────────────────────────────────────────────────
 .input {
-  font-family: $font;
-  font-size: 12px;
+  font-family: $font-mono;
+  font-size: 11px;
   background: $surface;
   border: 1px solid $border-hi;
   color: $text;
-  padding: 3px 8px;
-  width: 90px;
+  padding: 4px 8px;
+  width: 88px;
   outline: none;
   border-radius: $radius;
-  transition: border-color $dur $ease;
+  transition: border-color $dur $ease, box-shadow $dur $ease;
 
-  &:focus { border-color: $accent; }
+  &:focus {
+    border-color: $accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.12);
+  }
   &::placeholder { color: $text-muted; }
 
   &[type='number'] {
@@ -157,10 +242,10 @@
 
 // ── Toggle ────────────────────────────────────────────────────────────────────
 .toggle {
-  width: 28px;
-  height: 14px;
-  background: $border;
-  border-radius: 7px;
+  width: 30px;
+  height: 16px;
+  background: $border-hi;
+  border-radius: 99px;
   position: relative;
   cursor: pointer;
   transition: background $dur $ease;
@@ -169,17 +254,16 @@
   &::after {
     content: '';
     position: absolute;
-    top: 2px; left: 2px;
+    top: 3px; left: 3px;
     width: 10px; height: 10px;
     border-radius: 50%;
     background: $text-dim;
-    transition: transform $dur $ease, background $dur $ease;
+    transition: transform $dur $spring, background $dur $ease;
   }
 }
 
 .on {
-  background: rgba($accent, 0.2);
-
+  background: rgba($accent, 0.3);
   &::after {
     transform: translateX(14px);
     background: $accent;
@@ -187,26 +271,92 @@
 }
 
 // ── Color variants ────────────────────────────────────────────────────────────
-.c_danger  .label { color: rgba($danger,  0.9); }
-.c_success .label { color: rgba($success, 0.9); }
-.c_warning .label { color: rgba($warning, 0.9); }
+.c_danger {
+  .label { color: rgba($danger, 0.85); }
+  .iconWrap { color: rgba($danger, 0.7); }
+}
+.c_success {
+  .label { color: rgba($success, 0.85); }
+  .iconWrap { color: rgba($success, 0.7); }
+}
+.c_warning {
+  .label { color: rgba($warning, 0.85); }
+  .iconWrap { color: rgba($warning, 0.7); }
+}
 
-.c_danger.sel  { border-left-color: $danger;  background: rgba($danger,  0.06) !important; }
-.c_success.sel { border-left-color: $success; background: rgba($success, 0.06) !important; }
-.c_warning.sel { border-left-color: $warning; background: rgba($warning, 0.06) !important; }
+.c_danger.sel  {
+  background: $danger-dim !important;
+  border-color: rgba($danger, 0.3) !important;
+  &::before { background: $danger; }
+}
+.c_success.sel {
+  background: $success-dim !important;
+  border-color: rgba($success, 0.3) !important;
+  &::before { background: $success; }
+}
+.c_warning.sel {
+  background: $warning-dim !important;
+  border-color: rgba($warning, 0.3) !important;
+  &::before { background: $warning; }
+}
+
+// ── Back / Close buttons ──────────────────────────────────────────────────────
+.backBtn,
+.closeBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: $radius;
+  border: 1px solid $border;
+  background: $surface;
+  color: $text-dim;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: background $dur $ease, color $dur $ease, border-color $dur $ease;
+
+  &:hover {
+    background: $surface-hi;
+    color: $text;
+    border-color: $border-hi;
+  }
+}
+
+.closeBtn:hover {
+  background: rgba($danger, 0.12);
+  color: $danger;
+  border-color: rgba($danger, 0.3);
+}
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 .footer {
   display: flex;
-  gap: 12px;
-  padding: 7px 14px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
   border-top: 1px solid $border;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 
   span {
     font-size: 9px;
+    font-weight: 500;
     letter-spacing: 0.1em;
     color: $text-muted;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: $text-muted;
+    flex-shrink: 0;
   }
 }

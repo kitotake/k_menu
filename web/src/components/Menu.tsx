@@ -1,8 +1,15 @@
 // components/Menu.tsx
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faChevronRight, faArrowLeft, faXmark,
+  faSliders, faListUl,
+} from '@fortawesome/free-solid-svg-icons'
 import type { MenuData, MenuItem, ButtonItem, InputItem, ToggleItem, SubmenuItem } from '../types'
 import { nuiCallback } from '../utils/nui'
 import { useKey } from '../hooks/useKey'
+import { getIcon } from '../utils/icons'
 import s from './Menu.module.scss'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -17,7 +24,7 @@ function navigable(items: MenuItem[]) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Menu Item
+// Item
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface ItemProps {
@@ -34,14 +41,13 @@ interface ItemProps {
 function Item({ item, selected, index, inputs, onHover, onActivate, onInput, onToggle }: ItemProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Focus auto sur l'input quand sélectionné
   useEffect(() => {
     if (selected && item.type === 'input' && inputRef.current) {
       inputRef.current.focus()
     }
   }, [selected, item.type])
 
-  // Separator
+  // ── Separator
   if (item.type === 'separator') {
     return (
       <div className={s.sep}>
@@ -56,15 +62,19 @@ function Item({ item, selected, index, inputs, onHover, onActivate, onInput, onT
     : ''
 
   const toggleVal = item.type === 'toggle'
-    ? (inputs[item.id] !== undefined ? inputs[item.id] === 'true' : ((item as ToggleItem).value ?? false))
+    ? (inputs[item.id] !== undefined
+        ? inputs[item.id] === 'true'
+        : ((item as ToggleItem).value ?? false))
     : false
 
   const inputVal = item.type === 'input'
     ? (inputs[item.id] ?? (item as InputItem).value ?? '')
     : ''
 
+  const faIcon = getIcon(item.icon)
+
   return (
-    <div
+    <motion.div
       className={`${s.item} ${selected ? s.sel : ''} ${colorCls} ${item.disabled ? s.dis : ''}`}
       onMouseEnter={() => !item.disabled && onHover(index)}
       onClick={() => {
@@ -72,11 +82,33 @@ function Item({ item, selected, index, inputs, onHover, onActivate, onInput, onT
         if (item.type === 'toggle') onToggle(item as ToggleItem, !toggleVal)
         else onActivate(item)
       }}
+      initial={false}
+      animate={{
+        backgroundColor: selected ? undefined : 'transparent',
+      }}
+      whileTap={item.disabled ? {} : { scale: 0.98 }}
     >
+      {/* Icon */}
+      {faIcon && (
+        <span className={s.iconWrap}>
+          <FontAwesomeIcon icon={faIcon} />
+        </span>
+      )}
+
+      {/* Label */}
       <span className={s.label}>{item.label}</span>
 
+      {/* Right side */}
       <div className={s.right}>
-        {item.type === 'submenu' && <span className={s.arrow}>›</span>}
+        {item.type === 'submenu' && (
+          <motion.span
+            className={s.arrow}
+            animate={{ x: selected ? 2 : 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </motion.span>
+        )}
 
         {item.type === 'button' && (item as ButtonItem).rightLabel && (
           <span className={s.badge}>{(item as ButtonItem).rightLabel}</span>
@@ -103,18 +135,19 @@ function Item({ item, selected, index, inputs, onHover, onActivate, onInput, onT
         )}
 
         {item.type === 'toggle' && (
-          <div
+          <motion.div
             className={`${s.toggle} ${toggleVal ? s.on : ''}`}
             onClick={e => { e.stopPropagation(); onToggle(item as ToggleItem, !toggleVal) }}
+            whileTap={{ scale: 0.9 }}
           />
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Menu principal
+// Menu
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface MenuProps {
@@ -125,11 +158,10 @@ interface MenuProps {
 }
 
 export function Menu({ menu, isRoot, onClose, onBack }: MenuProps) {
-  const nav    = navigable(menu.items)
-  const [idx,  setIdx]    = useState(0)
-  const [vals, setVals]   = useState<Record<string, string>>({})
+  const nav   = navigable(menu.items)
+  const [idx,  setIdx]  = useState(0)
+  const [vals, setVals] = useState<Record<string, string>>({})
 
-  // Reset à chaque changement de menu
   useEffect(() => { setIdx(0) }, [menu.id])
 
   const selItemIdx = nav[idx] ?? -1
@@ -152,7 +184,7 @@ export function Menu({ menu, isRoot, onClose, onBack }: MenuProps) {
     const item = menu.items[selItemIdx]
     if (!item || item.type === 'separator' || item.disabled) return
     if (item.type === 'toggle') {
-      const cur = vals[item.id] !== undefined ? vals[item.id] === 'true' : ((item as ToggleItem).value ?? false)
+      const cur  = vals[item.id] !== undefined ? vals[item.id] === 'true' : ((item as ToggleItem).value ?? false)
       const next = !cur
       setVals(v => ({ ...v, [item.id]: String(next) }))
       nuiCallback('toggle', { id: item.id, value: next, menuId: menu.id })
@@ -183,39 +215,80 @@ export function Menu({ menu, isRoot, onClose, onBack }: MenuProps) {
   useKey('Backspace', onBack)
 
   return (
-    <div className={s.menu}>
+    <motion.div
+      className={s.menu}
+      initial={{ opacity: 0, x: -12, scale: 0.97 }}
+      animate={{ opacity: 1, x: 0,   scale: 1 }}
+      exit={{    opacity: 0, x: -8,  scale: 0.97 }}
+      transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+    >
       {/* Header */}
       <div className={s.header}>
-        <div className={s.title}>{menu.title}</div>
-        {menu.subtitle && <div className={s.sub}>{menu.subtitle}</div>}
+        <div className={s.headerIcon}>
+          <FontAwesomeIcon icon={faListUl} />
+        </div>
+        <div className={s.headerText}>
+          <div className={s.title}>{menu.title}</div>
+          {menu.subtitle && <div className={s.sub}>{menu.subtitle}</div>}
+        </div>
+        {!isRoot && (
+          <motion.button
+            className={s.backBtn}
+            onClick={onBack}
+            whileTap={{ scale: 0.9 }}
+            title="Retour"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} />
+          </motion.button>
+        )}
+        {isRoot && (
+          <motion.button
+            className={s.closeBtn}
+            onClick={() => { nuiCallback('close', {}); onClose() }}
+            whileTap={{ scale: 0.9 }}
+            title="Fermer"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </motion.button>
+        )}
       </div>
 
       {/* Items */}
       <div className={s.list}>
-        {menu.items.map((item, i) => (
-          <Item
-            key={item.id}
-            item={item}
-            selected={i === selItemIdx}
-            index={i}
-            inputs={vals}
-            onHover={hovered => {
-              const ni = nav.indexOf(hovered)
-              if (ni !== -1) setIdx(ni)
-            }}
-            onActivate={activate}
-            onInput={handleInput}
-            onToggle={handleToggle}
-          />
-        ))}
+        <AnimatePresence initial={false}>
+          {menu.items.map((item, i) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.12, delay: i * 0.018 }}
+            >
+              <Item
+                item={item}
+                selected={i === selItemIdx}
+                index={i}
+                inputs={vals}
+                onHover={hovered => {
+                  const ni = nav.indexOf(hovered)
+                  if (ni !== -1) setIdx(ni)
+                }}
+                onActivate={activate}
+                onInput={handleInput}
+                onToggle={handleToggle}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* Footer */}
       <div className={s.footer}>
         <span>↑↓ nav</span>
+        <span className={s.dot} />
         <span>↵ select</span>
+        <span className={s.dot} />
         <span>{isRoot ? 'esc fermer' : '⌫ retour'}</span>
       </div>
-    </div>
+    </motion.div>
   )
 }
