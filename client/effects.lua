@@ -1,5 +1,5 @@
 -- client/effects.lua
--- Effets visuels et locaux reçus depuis le serveur
+-- Effets visuels et locaux — V3 (kt_lib + kt_inventory)
 
 local state = {
     godMode    = false,
@@ -8,44 +8,52 @@ local state = {
     timeFrozen = false,
 }
 
+-- ─────────────────────────────────────────────────────────────
+-- Notification via kt_lib
+-- ─────────────────────────────────────────────────────────────
+
 local function notify(msg, ntype)
-    TriggerEvent('kt_lib:notify', { title = 'Admin', description = msg, type = ntype or 'info' })
+    lib.notify({
+        title       = 'Admin',
+        description = msg,
+        type        = ntype or 'inform',
+    })
 end
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- God Mode
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:godMode', function(enabled)
-    -- FIX #5 : enabled est un booléen direct depuis le serveur
     state.godMode = enabled == true
     SetEntityInvincible(PlayerPedId(), state.godMode)
-    notify(state.godMode and "God Mode ON" or "God Mode OFF")
+    notify(state.godMode and "God Mode ON" or "God Mode OFF",
+           state.godMode and "success" or "inform")
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Invisible
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:invisible', function(enabled)
     state.invisible = enabled == true
     SetEntityVisible(PlayerPedId(), not state.invisible, false)
-    notify(state.invisible and "Invisible ON" or "Invisible OFF")
+    notify(state.invisible and "Invisible ON" or "Invisible OFF",
+           state.invisible and "success" or "inform")
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Speed Boost
--- FIX #8 : Wait adaptatif — 0ms seulement quand actif
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:speedBoost', function(enabled)
     state.speedBoost = enabled == true
-    notify(state.speedBoost and "Speed Boost ON" or "Speed Boost OFF")
+    notify(state.speedBoost and "Speed Boost ON" or "Speed Boost OFF",
+           state.speedBoost and "success" or "inform")
 end)
 
 Citizen.CreateThread(function()
     while true do
-        -- FIX #8 : Wait(0) seulement si actif, sinon 500ms
         Citizen.Wait(state.speedBoost and 0 or 500)
         if state.speedBoost then
             local veh = GetVehiclePedIsIn(PlayerPedId(), false)
@@ -57,9 +65,9 @@ Citizen.CreateThread(function()
     end
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Heal / Revive
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:heal', function()
     local ped = PlayerPedId()
@@ -76,17 +84,18 @@ RegisterNetEvent('k_menu:fx:revive', function()
     notify("Revive !", "success")
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Freeze
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:freeze', function(enabled)
     FreezeEntityPosition(PlayerPedId(), enabled)
+    notify(enabled and "Freezé." or "Unfreeze.", enabled and "warning" or "success")
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Téléportation
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:tpTo', function(x, y, z)
     local ped = PlayerPedId()
@@ -96,17 +105,17 @@ RegisterNetEvent('k_menu:fx:tpTo', function(x, y, z)
     notify("Téléporté !", "success")
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Véhicules
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:spawnVeh', function(model)
     local hash = GetHashKey(model)
     RequestModel(hash)
     while not HasModelLoaded(hash) do Citizen.Wait(10) end
-    local coords = GetEntityCoords(PlayerPedId())
-    local veh = CreateVehicle(hash, coords.x + 3.0, coords.y, coords.z,
-        GetEntityHeading(PlayerPedId()), true, false)
+    local coords  = GetEntityCoords(PlayerPedId())
+    local heading = GetEntityHeading(PlayerPedId())
+    local veh = CreateVehicle(hash, coords.x + 3.0, coords.y, coords.z, heading, true, false)
     SetPedIntoVehicle(PlayerPedId(), veh, -1)
     SetModelAsNoLongerNeeded(hash)
     notify(model .. " spawné.", "success")
@@ -114,22 +123,30 @@ end)
 
 RegisterNetEvent('k_menu:fx:fixVeh', function()
     local veh = GetVehiclePedIsIn(PlayerPedId(), false)
-    if not DoesEntityExist(veh) then return end
+    if not DoesEntityExist(veh) then
+        return notify("Pas dans un véhicule.", "error")
+    end
     SetVehicleFixed(veh)
     SetVehicleEngineHealth(veh, 1000.0)
     SetVehicleBodyHealth(veh, 1000.0)
+    SetVehiclePetrolTankHealth(veh, 1000.0)
+    SetVehicleDirtLevel(veh, 0.0)
     notify("Véhicule réparé.", "success")
 end)
 
 RegisterNetEvent('k_menu:fx:delVeh', function()
     local veh = GetVehiclePedIsIn(PlayerPedId(), false)
-    if DoesEntityExist(veh) then DeleteVehicle(veh) end
+    if DoesEntityExist(veh) then
+        TaskLeaveVehicle(PlayerPedId(), veh, 0)
+        Citizen.Wait(500)
+        DeleteVehicle(veh)
+    end
     notify("Véhicule supprimé.", "success")
 end)
 
 RegisterNetEvent('k_menu:fx:deleteNear', function()
     local coords = GetEntityCoords(PlayerPedId())
-    local count = 0
+    local count  = 0
     for _, veh in ipairs(GetGamePool('CVehicle')) do
         if #(GetEntityCoords(veh) - coords) < 30.0
         and not IsPedInVehicle(PlayerPedId(), veh, false) then
@@ -140,9 +157,41 @@ RegisterNetEvent('k_menu:fx:deleteNear', function()
     notify(count .. " véhicule(s) supprimé(s).", "success")
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+RegisterNetEvent('k_menu:fx:boostVeh', function()
+    local veh = GetVehiclePedIsIn(PlayerPedId(), false)
+    if not DoesEntityExist(veh) then
+        return notify("Pas dans un véhicule.", "error")
+    end
+    SetVehicleCheatPowerIncrease(veh, 10.0)
+    SetVehicleMaxSpeed(veh, 300.0)
+    notify("Moteur boosté ×10 !", "success")
+end)
+
+-- ─────────────────────────────────────────────────────────────
+-- Armes — kt_inventory
+-- Les armes sont des items gérés par kt_inventory côté serveur.
+-- Le client reçoit uniquement un event de confirmation visuelle.
+-- L'ajout réel se fait dans server/admin.lua via exports.kt_inventory.
+-- ─────────────────────────────────────────────────────────────
+
+-- Confirmation visuelle après don d'arme par le serveur
+RegisterNetEvent('k_menu:fx:weaponGiven', function(label)
+    notify("Arme reçue : " .. tostring(label), "success")
+end)
+
+-- Confirmation visuelle après kit
+RegisterNetEvent('k_menu:fx:weaponKitGiven', function(kitName)
+    notify("Kit « " .. tostring(kitName) .. " » reçu !", "success")
+end)
+
+-- Confirmation visuelle après suppression
+RegisterNetEvent('k_menu:fx:weaponsRemoved', function()
+    notify("Inventaire vidé.", "success")
+end)
+
+-- ─────────────────────────────────────────────────────────────
 -- Météo
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:weather', function(weather)
     SetWeatherTypePersist(weather)
@@ -150,9 +199,9 @@ RegisterNetEvent('k_menu:fx:weather', function(weather)
     SetWeatherTypeNow(weather)
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Heure
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 RegisterNetEvent('k_menu:fx:time', function(h, m)
     NetworkOverrideClockTime(h, m, 0)
@@ -163,22 +212,23 @@ RegisterNetEvent('k_menu:fx:freezeTime', function(enabled, h, m)
     state.timeFrozen = enabled == true
     if state.timeFrozen then
         NetworkOverrideClockTime(h or 12, m or 0, 0)
-        notify("Temps gelé.", "info")
+        notify("Temps gelé.", "inform")
     else
-        notify("Temps dégelé.", "info")
+        notify("Temps dégelé.", "inform")
     end
 end)
 
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 -- Spectate
--- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────
 
 local spectating = false
 
 RegisterNetEvent('k_menu:fx:spectate', function()
     spectating = not spectating
     NetworkSetInSpectatorMode(spectating, GetPlayerPed(-1))
-    notify(spectating and "Spectate ON" or "Spectate OFF")
+    notify(spectating and "Spectate ON" or "Spectate OFF",
+           spectating and "success" or "inform")
 end)
 
-print("^2[k_menu] Effects chargé^7")
+print("^2[k_menu] Effects V3 (kt_lib + kt_inventory) chargé^7")
