@@ -21,18 +21,18 @@ Config.AdminKey = 'F10'   -- Ouvrir le menu admin
 -- Référence : https://docs.fivem.net/docs/game-references/controls/
 -- ─────────────────────────────────────────────────────────────
 Config.Noclip = {
-    toggleKey   = 56,   -- F9          — activer/désactiver le noclip
+   toggleKey = 56, -- F9
 
-    forward     = 32,   -- W (Z AZERTY)
-    backward    = 33,   -- S
-    left        = 34,   -- A (Q AZERTY)
-    right       = 35,   -- D
+    forward = 32, -- Z
+    backward = 33, -- S
+    left = 34, -- Q
+    right = 35, -- D
 
-    up          = 22,   -- ESPACE      — monter
-    down        = 36,   -- LEFT CTRL   — descendre
+    up = 44, -- A
+    down = 54, -- E
 
-    sprint      = 21,   -- LEFT SHIFT  — boost temporaire ×2.5
-    cycleSpeed  = 19,   -- LEFT ALT    — changer la vitesse
+    cycleSpeed = 21, -- SHIFT
+    sprint = 19, -- ALT
 
     -- Vitesses disponibles (cycle avec cycleSpeed)
     speeds = {
